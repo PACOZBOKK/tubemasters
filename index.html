@@ -541,6 +541,8 @@ const ORDER = ["L","E","R","U","C"];
 // La rareté dépend uniquement du nombre d'abonnés (et suit les chiffres en direct de l'API)
 const rarityOf = subs => ORDER.find(k=>subs>=RAR[k].min);
 function hash(s){let h=2166136261;for(const ch of s){h^=ch.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
+// Retirés du jeu (pas de chaîne YouTube officielle). Leur entrée reste dans RAW pour garder les identifiants des autres cartes.
+const RETIRED = new Set(["Ahmed Sylla"]);
 const CARDS = RAW.map(([name,subs,cat],i)=>{
   const r = rarityOf(subs);
   const h = hash(name);
@@ -549,7 +551,7 @@ const CARDS = RAW.map(([name,subs,cat],i)=>{
   return {id:"c"+i,name,subs,cat,r,hue:h%360,initials,
     atk:Math.round(200+Math.sqrt(subs)*180),
     def:Math.round(200+(h%500)+bonus)};
-});
+}).filter(c=>!RETIRED.has(c.name));
 // Illustrations par catégorie (pas de photos de vraies personnes)
 const ICONS = {
   "Sport":'<path d="M3 9v6M6 7v10M18 7v10M21 9v6M6 12h12"/>',
@@ -573,7 +575,7 @@ const ICONS = {
 };
 // Emplacement photo : quand l'appli sera branchée à l'API YouTube, elle remplira c.img (URL de la photo de la chaîne)
 const BY = Object.fromEntries(CARDS.map(c=>[c.id,c]));
-const fmtSubs = s => s>=1 ? (Math.round(s*10)/10).toString().replace(".",",")+" M" : Math.round(s*1000)+" k";
+const fmtSubs = s => s>=1 ? (Math.round(s*10)/10).toString().replace(".",",")+" M" : s>=0.001 ? Math.round(s*1000)+" k" : String(Math.round(s*1e6));
 const BOTS = ["xX_Clippeur_Xx","LaMeuteDuBouseuh","Pépite92","SqueezieFan2009","NoctaTCG","Lou_dans_le_game","KarmineKid","Chouquette","Gaspard.exe","Le Collectionneur"];
 
 // ---------- État + sauvegarde locale ----------
@@ -588,6 +590,12 @@ function fresh(){
 function load(){ try{ const t=localStorage.getItem(KEY); S = t?JSON.parse(t):fresh(); }catch(e){ S=fresh(); } }
 function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
 load();
+// Retire de la sauvegarde les cartes qui n'existent plus
+(function clean(){
+  for(const id of Object.keys(S.owned)) if(!BY[id]) delete S.owned[id];
+  S.fav=S.fav.filter(id=>BY[id]); S.vitrine=S.vitrine.filter(id=>BY[id]);
+  S.market=(S.market||[]).filter(l=>BY[l.id]); S.myLots=(S.myLots||[]).filter(l=>BY[l.id]);
+})();
 
 function addCard(id,holo){ const o=S.owned[id]||(S.owned[id]={n:0,h:0}); o.n++; if(holo)o.h++; }
 function removeCard(id,holo){ const o=S.owned[id]; if(!o||o.n<1)return false; if(holo){if(o.h<1)return false;o.h--;} o.n--; if(o.n===0){delete S.owned[id];S.vitrine=S.vitrine.filter(x=>x!==id);S.fav=S.fav.filter(x=>x!==id);} return true; }
@@ -724,7 +732,7 @@ function cardHTML(id,{holo=false,count=0,unknown=false}={}){
       <div class="art">${c.img?`<img class="ph" src="${esc(c.img)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:svgI(ICONS[tk]||ICONS.Divertissement)}${holo?`<span class="hol"></span>`:""}</div>
       <div class="cap">${esc(c.cat)} · ${R.name}</div>
       <div class="info">
-        <div class="subs"><b>${n}</b><small>${u==="M"?"millions":"mille"}<br>d'abonnés</small></div>
+        <div class="subs"><b>${n}</b><small>${u==="M"?"millions<br>d'abonnés":u==="k"?"mille<br>d'abonnés":"abonnés"}</small></div>
         <div class="flav">${esc(FLAV[tk])}</div>
       </div>
       <div class="foot"><span class="set"><i></i>TM · ${num}/${tot}</span><span class="rs" title="${R.name}">${RSYM[c.r]}</span></div>

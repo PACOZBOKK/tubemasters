@@ -54,10 +54,16 @@ module.exports = async (req, res) => {
       for (const it of j.items || []) byId[it.id] = it;
     }
 
-    const channels = {};
+    // Protection contre les homonymes : une chaîne trouvée automatiquement (par @ ou par recherche)
+    // avec moins de MIN_SUBS abonnés n'est presque jamais la bonne. On l'écarte.
+    // Pour forcer une chaîne précise, mets son identifiant "id" dans youtubeurs.json.
+    const MIN_SUBS = 20000;
+    const channels = {}, rejected = [];
     for (const [name, id] of entries) {
       const it = byId[id]; if (!it) continue;
       const st = it.statistics || {}, th = it.snippet.thumbnails || {};
+      const n = st.hiddenSubscriberCount ? null : Number(st.subscriberCount);
+      if (how[name] !== "id" && n !== null && n < MIN_SUBS) { rejected.push(name + " → " + it.snippet.title + " (" + n + " abonnés)"); continue; }
       channels[name] = {
         id,
         title: it.snippet.title,
@@ -75,6 +81,7 @@ module.exports = async (req, res) => {
       updated: new Date().toISOString(),
       count: Object.keys(channels).length,
       notFound: LIST.filter(x => !channels[x.name]).map(x => x.name),
+      rejected,
       quotaEpuise: quota,
       errors,
       channels

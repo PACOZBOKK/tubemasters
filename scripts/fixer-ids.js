@@ -19,6 +19,8 @@ const etat = {
   sansId: list.filter(x => !x.id).map(x => x.name),
   sansPhoto: Object.entries(ch).filter(([, v]) => !v.img).map(([k]) => k),
   quotaEpuise: !!live.quotaEpuise,
+  rejetees: live.rejected || [],
+  correspondances: Object.fromEntries(Object.entries(ch).map(([k, v]) => [k, `${v.title} | ${v.handle || ""} | ${v.subs ?? "masqué"} | ${v.match}`])),
   erreurs: live.errors || []
 };
 fs.writeFileSync("etat-api.json", JSON.stringify(etat, null, 1) + "\n");

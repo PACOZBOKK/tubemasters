@@ -1,0 +1,17 @@
+{
+  "name": "TubeMasters",
+  "short_name": "TubeMasters",
+  "description": "Ouvre des boosters et collectionne les cartes des youtubeurs français.",
+  "lang": "fr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#12111a",
+  "theme_color": "#15131f",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

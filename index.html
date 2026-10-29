@@ -110,56 +110,81 @@ h3{font-size:16px;font-weight:600}
 .stockbar i.on{background:linear-gradient(90deg,var(--accent),#ff3d7f);box-shadow:0 0 6px #ff3d7f88}
 .reveal{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px;width:100%}
 
-/* Carte (cqw = largeur de la carte) */
-.card{--m1:#6f6c7d;--m2:#e4e1ec;--m3:#8e8b9c;
-  position:relative;aspect-ratio:5/7;max-width:100%;width:100%;display:block;border:0;cursor:pointer;color:#fff;text-align:left;font:inherit;
-  box-sizing:border-box;container-type:inline-size;border-radius:5cqw;padding:3cqw;
-  background:linear-gradient(135deg,var(--m1),var(--m2) 28%,var(--m3) 52%,var(--m2) 78%,var(--m1));
-  box-shadow:0 2cqw 5cqw #0008,inset 0 0 0 .5cqw #ffffff40}
-.card.r-U{--m1:#14603b;--m2:#b6f5d2;--m3:#27a663}
-.card.r-R{--m1:#163f86;--m2:#c4e4ff;--m3:#3a8be8}
-.card.r-E{--m1:#4a1696;--m2:#f0c8ff;--m3:#9b55ff}
-.card.r-L{--m1:#8a4f08;--m2:#fff3b0;--m3:#e2a42a;box-shadow:0 2cqw 5cqw #0008,0 0 8cqw #ffc53d55,inset 0 0 0 .5cqw #ffffff60}
-.card .frame{position:relative;height:100%;border-radius:3cqw;overflow:hidden;display:flex;flex-direction:column;gap:2.2cqw;padding:3.2cqw;
-  background:linear-gradient(180deg,hsl(var(--h) 32% 20%),hsl(var(--h) 38% 9%));box-shadow:inset 0 0 0 .6cqw #0006}
-.card .head{display:flex;justify-content:space-between;align-items:baseline;gap:2cqw}
-.card .nm{font:800 9.6cqw/1.05 var(--f-display);letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.card .subs{flex:none;font:700 6.4cqw var(--f-mono);color:var(--m2)}
-.card .subs small{font-size:4.6cqw;opacity:.8;margin-left:.6cqw}
-.card .art{position:relative;flex:1;min-height:0;border-radius:2.4cqw;overflow:hidden;display:grid;place-items:center;
-  box-shadow:0 0 0 .8cqw var(--m3),0 0 0 1.3cqw #0006;
+/* Carte TCG (cqw = largeur de la carte) : bordure métal de rareté, corps clair teinté par le type */
+.card{--m1:#7d786c;--m2:#f6f1e4;--m3:#b8b1a0;--th:330;
+  position:relative;aspect-ratio:5/7;max-width:100%;width:100%;display:block;border:0;cursor:pointer;color:#1b1622;text-align:left;font:inherit;
+  box-sizing:border-box;container-type:inline-size;border-radius:4.6cqw;padding:3.4cqw;
+  background:linear-gradient(135deg,var(--m1),var(--m2) 24%,var(--m3) 48%,var(--m2) 74%,var(--m1));
+  box-shadow:0 2cqw 5cqw #0009,inset 0 0 0 .45cqw #ffffff55,inset 0 0 0 1.1cqw #00000014}
+.card.r-U{--m1:#14603b;--m2:#c4f7da;--m3:#2fae6b}
+.card.r-R{--m1:#173f86;--m2:#cfe8ff;--m3:#3a8be8}
+.card.r-E{--m1:#4a1696;--m2:#f2d2ff;--m3:#9b55ff}
+.card.r-L{--m1:#7a4306;--m2:#fff4b8;--m3:#e0a127;box-shadow:0 2cqw 5cqw #0009,0 0 8cqw #ffc53d66,inset 0 0 0 .45cqw #ffffff70}
+.card .frame{position:relative;height:100%;box-sizing:border-box;border-radius:2.4cqw;overflow:hidden;display:flex;flex-direction:column;gap:1.3cqw;padding:2.2cqw 2.8cqw 1.8cqw;
+  background:
+    radial-gradient(circle at 18% 8%,#ffffff80,transparent 40%),
+    repeating-linear-gradient(135deg,#ffffff1c 0 1.1cqw,transparent 1.1cqw 2.2cqw),
+    linear-gradient(180deg,hsl(var(--th) 72% 84%),hsl(var(--th) 52% 66%));
+  box-shadow:inset 0 0 0 .5cqw #00000030}
+.card.r-L .frame{background:
+    radial-gradient(circle at 18% 8%,#ffffffa0,transparent 40%),
+    repeating-linear-gradient(135deg,#ffffff26 0 1.1cqw,transparent 1.1cqw 2.2cqw),
+    linear-gradient(180deg,#fff1c4,hsl(var(--th) 55% 70%) 70%,#d9a640)}
+.card .stage{font:700 3.3cqw/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:#1b1622a8}
+.card .head{display:flex;align-items:center;gap:1.4cqw;margin-top:-.4cqw}
+.card .nm{flex:1;min-width:0;font:800 8.4cqw/1.05 var(--f-display);letter-spacing:-.03em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .hp{flex:none;display:flex;align-items:baseline;gap:.5cqw;font:800 7.6cqw/1 var(--f-display);color:#c0122f}
+.card .hp small{font:700 3.4cqw var(--f-mono);color:#1b1622}
+.orb{flex:none;width:8cqw;height:8cqw;border-radius:50%;display:grid;place-items:center;color:#fff;
+  background:radial-gradient(circle at 34% 30%,hsl(var(--t) 92% 74%),hsl(var(--t) 72% 38%));box-shadow:0 .5cqw 0 #0005,inset 0 0 0 .45cqw #ffffff90}
+.orb svg{width:62%;height:62%}
+.orb.sm{width:5.4cqw;height:5.4cqw;box-shadow:0 .35cqw 0 #0004,inset 0 0 0 .35cqw #ffffff90}
+.orb.cl{background:radial-gradient(circle at 34% 30%,#fff,#b9b3c4)}
+.card .art{position:relative;flex:1;min-height:0;margin:.8cqw .4cqw .2cqw;display:grid;place-items:center;overflow:hidden;
+  box-shadow:0 0 0 .8cqw #f7ebc2,0 0 0 1.4cqw #6e5320,0 1.6cqw 2.4cqw #0005;
   background:radial-gradient(circle at 50% 115%,hsl(var(--h) 95% 65%) 0,transparent 55%),linear-gradient(165deg,hsl(var(--h) 75% 52%),hsl(calc(var(--h) + 45) 70% 26%))}
 .card .art::before{content:"";position:absolute;inset:-30%;background:repeating-conic-gradient(from 0deg at 50% 55%,#ffffff1c 0 7deg,transparent 7deg 18deg)}
-.card .art::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 52%,#ffffff55 0 20%,transparent 42%),linear-gradient(180deg,transparent 70%,#0005)}
+.card .art::after{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;box-shadow:inset 0 0 3cqw #0008;background:radial-gradient(circle at 50% 52%,#ffffff50 0 18%,transparent 40%)}
 .card .art .ph{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1}
-.card .art svg{position:relative;z-index:1;width:54%;height:54%;color:#fff;filter:drop-shadow(0 1.4cqw 0 #0004) drop-shadow(0 0 4cqw #fff8)}
-.card .ini{position:absolute;z-index:2;left:2.4cqw;bottom:2.4cqw;font:800 6.4cqw var(--f-display);color:hsl(var(--h) 60% 22%);background:linear-gradient(180deg,#fff,var(--m2));
-  border-radius:99px;padding:1cqw 2.6cqw;box-shadow:0 .8cqw 0 #0005}
-.card .cnt{position:absolute;z-index:3;top:5cqw;right:5cqw;font:700 6cqw var(--f-mono);background:#000c;color:#fff;padding:1cqw 2.4cqw;border-radius:99px;box-shadow:0 0 0 .5cqw var(--m2)}
-.card .type{display:flex;align-items:center;gap:1.8cqw;font:700 5.6cqw var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--m2);
-  background:#0004;border-radius:99px;padding:1.4cqw 2.6cqw}
-.card .type svg{width:6.6cqw;height:6.6cqw;flex:none}
-.card .type span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card .type em{font-style:normal;letter-spacing:0;color:var(--m3);text-shadow:0 0 2cqw var(--m3)}
-.card .stats{display:grid;grid-template-columns:auto 1fr auto;gap:1.4cqw 2cqw;align-items:center;font:700 5.4cqw var(--f-mono)}
-.card .stats > span{color:#fffa}
-.card .stats i{height:2.6cqw;border-radius:2cqw;background:#0006;overflow:hidden;position:relative}
-.card .stats i::after{content:"";position:absolute;inset:0;width:var(--v);border-radius:2cqw}
-.card .stats i.a::after{background:linear-gradient(90deg,#ff6a3d,#ffb36b)}
-.card .stats i.d::after{background:linear-gradient(90deg,#3a8be8,#8fd3ff)}
-.card .stats b{font-size:6.2cqw;font-variant-numeric:tabular-nums}
-.card .foot{display:flex;justify-content:space-between;font:500 4.6cqw var(--f-mono);color:#fff9;letter-spacing:.06em}
-.card .glare{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:4;opacity:0;transition:opacity .2s;
+.card .art > svg{position:relative;z-index:1;width:46%;height:46%;color:#fff;filter:drop-shadow(0 1.4cqw 0 #0004) drop-shadow(0 0 4cqw #fff8)}
+.card .art .hol{position:absolute;inset:0;z-index:3;mix-blend-mode:color-dodge;opacity:.55;pointer-events:none;
+  background:linear-gradient(115deg,transparent 15%,#ff7ad9 30%,#ffe57a 40%,#7affc4 50%,#7ad4ff 60%,#c27aff 70%,transparent 85%);background-size:300% 300%;animation:holo 4s linear infinite}
+.card.r-L .art::after{background:radial-gradient(circle at 50% 52%,#fff6 0 18%,transparent 40%),
+  radial-gradient(circle at 20% 25%,#fff 0 1.2cqw,transparent 1.6cqw),radial-gradient(circle at 78% 30%,#fff 0 1cqw,transparent 1.4cqw),
+  radial-gradient(circle at 70% 75%,#fff 0 .9cqw,transparent 1.3cqw),radial-gradient(circle at 30% 70%,#fff 0 .8cqw,transparent 1.2cqw);animation:twinkle 2.4s ease-in-out infinite}
+@keyframes twinkle{50%{opacity:.75}}
+@keyframes holo{0%{background-position:100% 50%}100%{background-position:-100% 50%}}
+.card .cap{margin:0 -2.8cqw;padding:.7cqw 2.8cqw;text-align:center;font:italic 600 3.4cqw/1.2 var(--f-body);color:#1b1622c8;
+  background:linear-gradient(90deg,transparent,#ffffffa0 18%,#ffffffa0 82%,transparent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .moves{display:flex;flex-direction:column}
+.card .mv{display:grid;grid-template-columns:13cqw 1fr auto;gap:1.6cqw;align-items:center;padding:1.3cqw .4cqw}
+.card .mv + .mv{border-top:.35cqw solid #1b162230}
+.card .cost{display:flex;flex-wrap:wrap;gap:.5cqw}
+.card .an{min-width:0;font:800 5.4cqw/1.1 var(--f-display);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .dmg{font:800 7cqw/1 var(--f-display);font-variant-numeric:tabular-nums}
+.card .wr{display:grid;grid-template-columns:repeat(3,1fr);gap:1cqw;padding:1cqw 0;border-top:.35cqw solid #1b162240;border-bottom:.35cqw solid #1b162240}
+.card .wr > div{display:flex;flex-direction:column;align-items:center;gap:.5cqw;font:700 2.9cqw/1 var(--f-mono);text-transform:uppercase;letter-spacing:.04em;color:#1b1622a0}
+.card .wr span{display:flex;align-items:center;gap:.5cqw;font:800 3.8cqw/1 var(--f-mono);color:#1b1622}
+.card .flav{font:italic 500 3.4cqw/1.3 var(--f-body);color:#1b1622d0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card .info{display:grid;grid-template-columns:auto 1fr;gap:2.4cqw;align-items:center;padding:1.8cqw 2cqw;border-radius:1.8cqw;background:#ffffff55;box-shadow:inset 0 0 0 .35cqw #1b162230}
+.card .subs{display:flex;align-items:center;gap:1cqw;padding-right:2.4cqw;border-right:.35cqw solid #1b162230}
+.card .subs b{font:800 9cqw/1 var(--f-display);letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.card .subs small{font:700 2.9cqw/1.15 var(--f-mono);text-transform:uppercase;letter-spacing:.04em;color:#1b1622b0}
+.card .info .flav{-webkit-line-clamp:3}
+.card .art{margin-block:1cqw .4cqw}
+.card .foot{display:flex;justify-content:space-between;align-items:center;gap:1cqw;font:700 3.1cqw/1 var(--f-mono);color:#1b1622b0;letter-spacing:.04em}
+.card .set{display:inline-flex;align-items:center;gap:1cqw}
+.card .set i{width:4.4cqw;height:3.1cqw;border-radius:.8cqw;background:#c0122f;position:relative}
+.card .set i::after{content:"";position:absolute;left:1.6cqw;top:.75cqw;border-left:1.5cqw solid #fff;border-top:.8cqw solid transparent;border-bottom:.8cqw solid transparent}
+.card .rs{font-size:3.8cqw;letter-spacing:-.05em;color:#1b1622}
+.card.r-L .rs{color:#a86c00;text-shadow:0 0 1cqw #fff}
+.card .cnt{position:absolute;z-index:6;top:-1.5cqw;right:-1.5cqw;font:800 6cqw/1 var(--f-mono);background:#15131f;color:#fff;padding:1.4cqw 2.6cqw;border-radius:99px;box-shadow:0 0 0 .6cqw var(--m2)}
+.card .glare{position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:5;opacity:0;transition:opacity .2s;
   background:radial-gradient(circle at var(--gx,50%) var(--gy,50%),#ffffff70,transparent 50%);mix-blend-mode:overlay}
 .tilting .glare,.tilting.card .glare{opacity:1}
-.card.holo .frame::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:3;mix-blend-mode:color-dodge;opacity:.45;
-  background:linear-gradient(115deg,transparent 15%,#ff7ad9 30%,#ffe57a 40%,#7affc4 50%,#7ad4ff 60%,#c27aff 70%,transparent 85%);background-size:300% 300%;animation:holo 4s linear infinite}
-@keyframes holo{0%{background-position:100% 50%}100%{background-position:-100% 50%}}
-.card.r-L .art::after{background:radial-gradient(circle at 50% 52%,#fff6 0 20%,transparent 42%),
-  radial-gradient(circle at 20% 25%,#fff 0 1.2cqw,transparent 1.6cqw),radial-gradient(circle at 78% 30%,#fff 0 1cqw,transparent 1.4cqw),
-  radial-gradient(circle at 70% 75%,#fff 0 .9cqw,transparent 1.3cqw),radial-gradient(circle at 30% 70%,#fff 0 .8cqw,transparent 1.2cqw),linear-gradient(180deg,transparent 70%,#0005);
-  animation:twinkle 2.4s ease-in-out infinite}
-@keyframes twinkle{50%{opacity:.75}}
+.card.holo .frame::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:4;mix-blend-mode:overlay;opacity:.35;
+  background:linear-gradient(115deg,transparent 25%,#ffffffaa 45%,#ffe57a88 50%,transparent 65%);background-size:300% 300%;animation:holo 5s linear infinite}
+
 
 /* Dos de carte */
 .cback{box-sizing:border-box;position:relative;aspect-ratio:5/7;width:100%;border-radius:5cqw;container-type:inline-size;padding:3cqw;display:block;border:0;cursor:pointer;
@@ -543,19 +568,60 @@ function packHTML(t=PACKS[0]){
     <div class="pk-ed"><span>${t.k==="classic"?"Édition classique":"Édition "+esc(t.name)}</span></div>
     <div class="pk-foot">5 CARTES · YOUTUBE FR</div><div class="pk-glare"></div></div>`;
 }
+// Types (teinte du corps de carte + noms d'attaques) et textes d'ambiance par catégorie
+const TYPES={
+  Gaming:[190,"Rage quit","Clutch final"], Humour:[46,"Vanne gratuite","Fou rire général"], Divertissement:[330,"Concept inédit","Vidéo événement"],
+  Animation:[275,"Coup de crayon","Épisode culte"], Aventure:[115,"Défi extrême","Ascension"], Insolite:[300,"Bizarrerie","Mystère total"],
+  Science:[255,"Expérience","Démonstration"], Culture:[28,"Anecdote","Grand récit"], Actu:[210,"Brève","Décryptage"],
+  "Éducation":[150,"Leçon","Révision express"], Lifestyle:[318,"Vlog","Tendance"], Sport:[6,"Échauffement","Série max"],
+  Auto:[220,"Démarrage","Pleine balle"], Cuisine:[22,"Mise en bouche","Recette XXL"], Musique:[285,"Couplet","Refrain viral"],
+  Voyage:[175,"Escale","Tour du monde"], "Beauté":[340,"Retouche","Glow up"], Tech:[200,"Bug fix","Mise à jour"]
+};
+const TKEYS=Object.keys(TYPES);
+const FLAV={
+  Gaming:"On le croise souvent en live, tard le soir, manette en main.",
+  Humour:"Ses sketchs font le tour des groupes de discussion en une heure.",
+  Divertissement:"Chaque nouvelle vidéo devient le sujet de conversation du lendemain.",
+  Animation:"Ses dessins prennent vie image après image.",
+  Aventure:"Toujours prêt pour le défi que personne d'autre n'ose tenter.",
+  Insolite:"Spécialiste de tout ce qui paraît impossible au premier regard.",
+  Science:"Explique en dix minutes ce qu'un manuel met un chapitre à dire.",
+  Culture:"Une anecdote pour chaque occasion, et souvent plusieurs.",
+  Actu:"Résume l'actualité avant que tu aies fini ton café.",
+  "Éducation":"Des milliers d'élèves lui doivent au moins une bonne note.",
+  Lifestyle:"Partage son quotidien, et des millions de gens suivent.",
+  Sport:"Ne saute jamais une séance, même devant la caméra.",
+  Auto:"Plus le moteur est bruyant, plus la vidéo est bonne.",
+  Cuisine:"Ses recettes donnent faim même après le repas.",
+  Musique:"Ses refrains restent en tête bien après la fin de la vidéo.",
+  Voyage:"Sa valise n'a jamais le temps d'être défaite.",
+  "Beauté":"Ses tutos ont changé la routine de milliers d'abonnés.",
+  Tech:"Démonte d'abord, explique ensuite."
+};
+const RSYM={C:"●",U:"◆",R:"★",E:"★★",L:"★★★"};
+const RETREAT={C:1,U:1,R:2,E:2,L:3};
+const typeOf=cat=>TYPES[cat]?cat:"Divertissement";
+const orb=(cat,cls="")=>`<i class="orb ${cls}" style="--t:${TYPES[typeOf(cat)][0]}" title="${esc(typeOf(cat))}">${svgI(ICONS[typeOf(cat)]||ICONS.Divertissement)}</i>`;
+const clOrb=`<i class="orb sm cl" title="Incolore"></i>`;
+function otherType(ti,step,off){ let k=TKEYS[(ti*step+off)%TKEYS.length]; if(k===TKEYS[ti]) k=TKEYS[(ti+1)%TKEYS.length]; return k; }
+
 function cardHTML(id,{holo=false,count=0,unknown=false}={}){
   const c=BY[id], R=RAR[c.r];
   if(unknown) return backHTML(R.name,"","locked");
-  const k=Math.round(c.atk*(holo?1.1:1)), d=Math.round(c.def*(holo?1.1:1));
-  const num=String(CARDS.indexOf(c)+1).padStart(3,"0");
-  const icon=ICONS[c.cat]||ICONS.Divertissement;
-  return `<button class="card r-${c.r} ${holo?"holo":""}" style="--h:${c.hue}" data-card="${id}" aria-label="${esc(c.name)}, ${R.name}${holo?" holo":""}">
+  const tk=typeOf(c.cat), T=TYPES[tk];
+  const num=String(CARDS.indexOf(c)+1).padStart(3,"0"), tot=String(CARDS.length).padStart(3,"0");
+  const [n,u]=fmtSubs(c.subs).split(" ");
+  return `<button class="card r-${c.r} ${holo?"holo":""}" style="--h:${c.hue};--th:${T[0]}" data-card="${id}" aria-label="${esc(c.name)}, ${R.name}${holo?" holo":""}">
     <div class="frame">
-      <div class="head"><span class="nm">${esc(c.name)}</span><span class="subs">${fmtSubs(c.subs).replace(" ","<small>")}</small></span></div>
-      <div class="art">${c.img?`<img class="ph" src="${esc(c.img)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:svgI(icon)}<b class="ini">${esc(c.initials)}</b></div>
-      <div class="type">${svgI(icon)}<span>${esc(c.cat)}</span><em>${"◆".repeat(5-ORDER.indexOf(c.r))}</em></div>
-      <div class="stats"><span>ATK</span><i class="a" style="--v:${Math.min(100,k/12.5)}%"></i><b>${k}</b><span>DEF</span><i class="d" style="--v:${Math.min(100,d/11)}%"></i><b>${d}</b></div>
-      <div class="foot"><span>#${num}/${String(CARDS.length).padStart(3,"0")}</span><span>${holo?"HOLO · ":""}${R.name.toUpperCase()}</span></div>
+      <div class="stage">Youtubeur · Saison 1${holo?" · Holo":""}</div>
+      <div class="head"><span class="nm">${esc(c.name)}</span>${orb(tk)}</div>
+      <div class="art">${c.img?`<img class="ph" src="${esc(c.img)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:svgI(ICONS[tk]||ICONS.Divertissement)}${holo?`<span class="hol"></span>`:""}</div>
+      <div class="cap">${esc(c.cat)} · ${R.name}</div>
+      <div class="info">
+        <div class="subs"><b>${n}</b><small>${u==="M"?"millions":"mille"}<br>d'abonnés</small></div>
+        <div class="flav">${esc(FLAV[tk])}</div>
+      </div>
+      <div class="foot"><span class="set"><i></i>TM1 · ${num}/${tot}</span><span class="rs" title="${R.name}">${RSYM[c.r]}</span></div>
     </div>${count>1?`<em class="cnt">×${count}</em>`:""}<span class="glare"></span></button>`;
 }
 

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TubeMasters · Vérification</title>
+<style>
+:root{color-scheme:dark;--bg:#12111a;--panel:#1c1a27;--line:#363247;--fg:#f3f0fa;--muted:#a29cb8;--ok:#4fd18b;--warn:#ffc53d;--bad:#ff5d73}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px system-ui,-apple-system,sans-serif;padding:20px max(16px,env(safe-area-inset-left,0px))}
+h1{font-size:22px;margin:0 0 4px} p{color:var(--muted);max-width:70ch;line-height:1.5}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:640px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:var(--panel);font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+td.n{font-variant-numeric:tabular-nums;text-align:right}
+.pill{font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px}
+.handle,.id{color:var(--ok);background:#4fd18b22}.recherche{color:var(--warn);background:#ffc53d22}.absent{color:var(--bad);background:#ff5d7322}
+a{color:#7cc4ff} code{background:var(--panel);padding:1px 5px;border-radius:5px}
+</style>
+</head>
+<body>
+<h1>Vérification des chaînes</h1>
+<p>Compare la colonne « Youtubeur » à la colonne « Chaîne trouvée ». Les lignes en jaune ont été trouvées par recherche : vérifie-les en priorité. Si une chaîne est fausse, ouvre la bonne chaîne sur YouTube, copie son identifiant (il commence par <code>UC</code>) et colle-le dans le champ <code>"id"</code> de ce youtubeur dans <code>youtubeurs.json</code>.</p>
+<p id="status">Chargement…</p>
+<div class="wrap"><table><thead><tr><th>Youtubeur</th><th>Chaîne trouvée</th><th>@handle</th><th>Abonnés</th><th>Méthode</th><th>Identifiant</th></tr></thead><tbody id="rows"></tbody></table></div>
+<script>
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+fetch("/api/channels").then(r=>r.json()).then(d=>{
+  if(d.error){ document.getElementById("status").textContent="Erreur : "+d.error; return; }
+  document.getElementById("status").textContent=`${d.count} chaînes trouvées · ${d.notFound.length} introuvables · mis à jour le ${new Date(d.updated).toLocaleString("fr-FR")}`;
+  const names=[...Object.keys(d.channels),...d.notFound];
+  const order={recherche:0,handle:1,id:2};
+  names.sort((a,b)=>(order[d.channels[a]?.match]??-1)-(order[d.channels[b]?.match]??-1));
+  document.getElementById("rows").innerHTML=names.map(n=>{const c=d.channels[n];
+    if(!c) return `<tr><td>${esc(n)}</td><td colspan="3">—</td><td><span class="pill absent">introuvable</span></td><td></td></tr>`;
+    return `<tr><td>${esc(n)}</td><td><a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.title)}</a></td><td>${esc(c.handle)}</td><td class="n">${c.subs?c.subs.toLocaleString("fr-FR"):"masqué"}</td><td><span class="pill ${c.match}">${c.match}</span></td><td><code>${esc(c.id)}</code></td></tr>`;}).join("");
+}).catch(e=>{ document.getElementById("status").textContent="Impossible de joindre /api/channels : "+e.message; });
+</script>
+</body>
+</html>

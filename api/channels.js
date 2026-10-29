@@ -30,7 +30,9 @@ module.exports = async (req, res) => {
       try { return await yt(path, params); }
       catch (e) { if (/quota/i.test(e.message)) quota = true; throw e; }
     };
-    for (const x of LIST) if (x.id) { ids[x.name] = x.id; how[x.name] = x.src === "recherche" ? "recherche" : "id"; }
+    // "id" = identifiant mis à la main (toujours accepté). Les identifiants enregistrés automatiquement
+    // gardent leur origine (handle / recherche) et restent soumis à la protection contre les homonymes.
+    for (const x of LIST) if (x.id) { ids[x.name] = x.id; how[x.name] = x.src === "recherche" ? "recherche" : x.src ? "handle" : "id"; }
 
     await pool(LIST.filter(x => !x.id && x.handle), 8, async x => {
       try {

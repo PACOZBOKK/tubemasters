@@ -466,6 +466,20 @@ input[type=number],input[type=search]{font-size:16px}
 .inst .x{position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:50%;border:0;background:#ffffff10;color:var(--muted);cursor:pointer;font-size:13px}
 .inst .btn{margin-top:8px;padding:9px 14px;font-size:14px}
 .inst .more{background:none;border:0;padding:0;margin-top:6px;color:var(--accent);font:600 13px var(--f-body);cursor:pointer}
+/* Cartes v3 : pas de cadre coloré, teinte unique par rareté (corps, illustration, pastille) */
+.card{padding:0;border-radius:2.6cqw;background:none;box-shadow:0 2cqw 5cqw #0009}
+.card.r-C{--b1:#f3f1f7;--b2:#cbc6d6;--a1:#9a95ad;--a2:#4a4560;--o1:#e4e0ec;--o2:#7a748e}
+.card.r-U{--b1:#e4f8ec;--b2:#a3dcba;--a1:#3cc47e;--a2:#105c3a;--o1:#a6f0c8;--o2:#1f8f56}
+.card.r-R{--b1:#e2eeff;--b2:#a3c6f2;--a1:#4393f0;--a2:#14356f;--o1:#acd4ff;--o2:#2a6fd6}
+.card.r-E{--b1:#f2e4ff;--b2:#c8a0f1;--a1:#a660ff;--a2:#3e1487;--o1:#e4c6ff;--o2:#7d3ae0}
+.card.r-L{--b1:#fff6d0;--b2:#e8bd52;--a1:#ffc23d;--a2:#9c4c08;--o1:#fff1ad;--o2:#d68b10;box-shadow:0 2cqw 5cqw #0009,0 0 7cqw #ffc53d50}
+.card[class*="r-"] .frame{border-radius:2.6cqw;padding:2.8cqw 3.2cqw 2.2cqw;
+  background:radial-gradient(circle at 18% 6%,#ffffff90,transparent 42%),repeating-linear-gradient(135deg,#ffffff1e 0 1.1cqw,transparent 1.1cqw 2.2cqw),linear-gradient(180deg,var(--b1),var(--b2));
+  box-shadow:inset 0 0 0 .4cqw #00000024}
+.card .art{background:radial-gradient(circle at 50% 110%,#ffffff55 0,transparent 55%),linear-gradient(165deg,var(--a1),var(--a2));
+  box-shadow:0 0 0 .7cqw #ffffffc0,0 0 0 1.2cqw #00000030,0 1.4cqw 2.4cqw #0004}
+.card .orb{background:radial-gradient(circle at 34% 30%,var(--o1),var(--o2))}
+.card .cnt{box-shadow:0 0 0 .6cqw #fff}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -574,11 +588,11 @@ const RAW = [
  ["InThePanda",1.1,"Culture"],["Easy French",1.3,"Éducation"],["Français Authentique",1.2,"Éducation"],["innerFrench",1.1,"Éducation"],["Nino Arial",0.9,"Humour"],["Les Frères Poulain",0.9,"Divertissement"],["Akim Omiri",0.8,"Humour"],["Jeel",0.8,"Gaming"],["Wartek",0.8,"Gaming"],["JLTomy",0.8,"Gaming"],["Calmos",0.6,"Culture"],["Cookie Connecté",0.6,"Tech"],["Hugo Lisoir",0.6,"Éducation"],["Le Précepteur",0.6,"Culture"],["Les Revues du Monde",0.5,"Culture"],["Dans Ton Corps",0.5,"Science"],["Stupid Economics",0.5,"Éducation"],["Le Riz Jaune",0.5,"Cuisine"],["Rémi Ragnar",0.5,"Sport"],["Ilyes Djadel",0.5,"Sport"],["Simon Puech",0.5,"Divertissement"],["Micmaths",0.4,"Science"],["L'Esprit Sorcier",0.4,"Science"],["Axolot",0.4,"Insolite"],["Taupe10",0.4,"Insolite"],["Mr Meeea",0.4,"Culture"],["Jigmé",0.4,"Humour"],["La Ferme Jérôme",0.4,"Humour"],["La Chanson du Dimanche",0.4,"Musique"],["Leo Duff",0.4,"Tech"],["El Jj",0.3,"Science"],["Scilabus",0.3,"Science"],["Captain Popcorn",0.3,"Culture"],["Heu?reka",0.3,"Éducation"],["Monsieur Phi",0.3,"Culture"],["Kayane",0.3,"Gaming"],["Chelxie",0.3,"Gaming"],["Benjamin Code",0.3,"Tech"],["Le Réveilleur",0.2,"Science"],["Histony",0.2,"Culture"],["Passé sauvage",0.2,"Culture"]
 ];
 const RAR = {
-  L:{name:"Légendaire",min:10,val:2000,c:"var(--r-l)",w:1.5},
-  E:{name:"Épique",min:5,val:500,c:"var(--r-e)",w:6},
-  R:{name:"Rare",min:2.5,val:150,c:"var(--r-r)",w:13},
-  U:{name:"Peu commune",min:1.2,val:50,c:"var(--r-u)",w:25},
-  C:{name:"Commune",min:0,val:20,c:"var(--r-c)",w:54.5}
+  L:{name:"Légendaire",min:10,val:2000,c:"var(--r-l)",w:0.3},
+  E:{name:"Épique",min:5,val:500,c:"var(--r-e)",w:4},
+  R:{name:"Rare",min:2.5,val:150,c:"var(--r-r)",w:12},
+  U:{name:"Peu commune",min:1.2,val:50,c:"var(--r-u)",w:28},
+  C:{name:"Commune",min:0,val:20,c:"var(--r-c)",w:55.7}
 };
 const ORDER = ["L","E","R","U","C"];
 // La rareté dépend uniquement du nombre d'abonnés (et suit les chiffres en direct de l'API)
@@ -652,8 +666,11 @@ const norm = t=>String(t).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowe
 const shuffle = a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const esc = s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function toast(msg){ document.querySelectorAll(".toast").forEach(x=>x.remove()); const t=document.createElement("div"); t.setAttribute("role","status"); t.className="toast"; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2200); }
-function rollRarity(){ let x=Math.random()*100; for(const k of ORDER){ if((x-=RAR[k].w)<0) return k; } return "C"; }
-function drawCard(theme){ const r=rollRarity(); let pool=CARDS.filter(c=>c.r===r);
+// Tirage d'une rareté. minU : au moins Peu commune (dernière carte de chaque booster).
+function rollRarity(minU){ const ks=minU?ORDER.filter(k=>k!=="C"):ORDER; let x=Math.random()*ks.reduce((a,k)=>a+RAR[k].w,0);
+  for(const k of ks){ if((x-=RAR[k].w)<0) return k; } return ks[ks.length-1]; }
+function drawCard(theme,minU){ let r=rollRarity(minU), pool=CARDS.filter(c=>c.r===r);
+  if(!pool.length){ pool=CARDS.filter(c=>c.r==="C"); }
   if(theme&&theme.cats&&Math.random()<0.8){ const t=pool.filter(c=>theme.cats.includes(c.cat)); if(t.length) pool=t; }
   return {id:pick(pool).id,holo:Math.random()<0.06}; }
 function mmss(ms){ ms=Math.max(0,ms); const m=Math.floor(ms/60000), s=Math.floor(ms%60000/1000); return m+":"+String(s).padStart(2,"0"); }
@@ -841,8 +858,8 @@ boosters(){
     </div>
     ${lastPull?`<div class="stack"><h3>Ton dernier booster</h3><div class="reveal">${lastPull.map(p=>`<div class="pull">${cardHTML(p.id,{holo:p.holo})}${p.isNew?`<span class="newb">Nouveau</span>`:""}</div>`).join("")}</div></div>`:""}
     <details class="box odds"><summary>Taux d'obtention</summary>
-      ${ORDER.map(k=>`<div class="oddrow"><span style="color:${RAR[k].c};font-weight:700">${RAR[k].name}</span><i style="--v:${Math.max(3,RAR[k].w/54.5*100)}%;--c:${RAR[k].c}"></i><span class="mono" style="text-align:right">${String(RAR[k].w).replace(".",",")} %</span></div>`).join("")}
-      <p class="note" style="margin:12px 0 0">Chaque carte a 6 % de chances d'être holographique.</p>
+      ${ORDER.map(k=>`<div class="oddrow"><span style="color:${RAR[k].c};font-weight:700">${RAR[k].name}</span><i style="--v:${Math.max(2,RAR[k].w/55.7*100)}%;--c:${RAR[k].c}"></i><span class="mono" style="text-align:right">${String(RAR[k].w).replace(".",",")} %</span></div>`).join("")}
+      <p class="note" style="margin:12px 0 0">Chaque booster contient au moins une carte Peu commune ou mieux. Chaque carte a 6 % de chances d'être holographique. En moyenne, une Légendaire tous les 50 boosters.</p>
     </details>
   </div>`;
 },
@@ -961,7 +978,7 @@ function openPack(silent,theme=PACKS[selPack]){
   if(S.stock<1) return;
   if(S.stock>=MAXSTOCK) S.lastRegen=Date.now();
   S.stock--; S.opened++;
-  const pulls=Array.from({length:5},()=>drawCard(theme));
+  const pulls=Array.from({length:5},(_,i)=>drawCard(theme,i===4));
   pulls.sort((a,b)=>ORDER.indexOf(BY[b.id].r)-ORDER.indexOf(BY[a.id].r) || a.holo-b.holo);
   const seen=new Set();
   lastPull=pulls.map(p=>{ const isNew=!S.owned[p.id] && !seen.has(p.id); seen.add(p.id); return {...p,isNew}; });

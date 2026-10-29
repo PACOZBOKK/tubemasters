@@ -2,7 +2,7 @@ name: Enregistrer les chaînes trouvées
 on:
   workflow_dispatch:
   schedule:
-    - cron: "17 6 * * *"
+    - cron: "17 9 * * *"
 permissions:
   contents: write
 jobs:

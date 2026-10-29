@@ -24,18 +24,24 @@ module.exports = async (req, res) => {
   }
   try {
     const ids = {}, how = {}, errors = [];
-    for (const x of LIST) if (x.id) { ids[x.name] = x.id; how[x.name] = "id"; }
+    let quota = false;
+    const call = async (path, params) => {
+      if (quota) throw new Error("quota épuisé");
+      try { return await yt(path, params); }
+      catch (e) { if (/quota/i.test(e.message)) quota = true; throw e; }
+    };
+    for (const x of LIST) if (x.id) { ids[x.name] = x.id; how[x.name] = x.src === "recherche" ? "recherche" : "id"; }
 
     await pool(LIST.filter(x => !x.id && x.handle), 8, async x => {
       try {
-        const j = await yt("/channels", { part: "id", forHandle: "@" + x.handle });
+        const j = await call("/channels", { part: "id", forHandle: "@" + x.handle });
         if (j.items && j.items.length) { ids[x.name] = j.items[0].id; how[x.name] = "handle"; }
       } catch (e) { errors.push(x.name + " : " + e.message); }
     });
 
     await pool(LIST.filter(x => !ids[x.name]), 4, async x => {
       try {
-        const j = await yt("/search", { part: "snippet", type: "channel", q: x.name, maxResults: 1, regionCode: "FR", relevanceLanguage: "fr" });
+        const j = await call("/search", { part: "snippet", type: "channel", q: x.name, maxResults: 1, regionCode: "FR", relevanceLanguage: "fr" });
         const it = j.items && j.items[0];
         if (it) { ids[x.name] = it.snippet.channelId; how[x.name] = "recherche"; }
       } catch (e) { errors.push(x.name + " : " + e.message); }
@@ -63,11 +69,13 @@ module.exports = async (req, res) => {
       };
     }
 
-    res.setHeader("Cache-Control", "s-maxage=86400, stale-while-revalidate=86400");
+    // Résultat incomplet (quota, erreur) : cache court pour réessayer vite ; sinon 24 h
+    res.setHeader("Cache-Control", errors.length ? "s-maxage=900" : "s-maxage=86400, stale-while-revalidate=86400");
     res.status(200).json({
       updated: new Date().toISOString(),
       count: Object.keys(channels).length,
       notFound: LIST.filter(x => !channels[x.name]).map(x => x.name),
+      quotaEpuise: quota,
       errors,
       channels
     });

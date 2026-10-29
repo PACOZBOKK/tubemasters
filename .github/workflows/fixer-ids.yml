@@ -1,0 +1,28 @@
+name: Enregistrer les chaînes trouvées
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 6 * * *"
+permissions:
+  contents: write
+jobs:
+  ids:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lire /api/channels sur le site
+        run: |
+          for host in tubemasters-dcod.vercel.app tubemasters-dcod-zbok.vercel.app; do
+            if curl -sSf -m 120 "https://$host/api/channels" -o live.json; then echo "OK $host"; break; fi
+          done
+          test -s live.json || echo '{"error":"site injoignable"}' > live.json
+      - name: Enregistrer les identifiants
+        run: node scripts/fixer-ids.js
+      - name: Commit
+        run: |
+          rm -f live.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898+github-actions[bot]@users.noreply.github.com"
+          git add youtubeurs.json etat-api.json
+          git diff --cached --quiet || git commit -m "Identifiants de chaînes mis à jour automatiquement"
+          git push

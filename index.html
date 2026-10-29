@@ -34,7 +34,7 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background
 .wallet{display:flex;gap:8px;font-family:var(--f-mono);font-size:13px}
 .chip{background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:4px 10px;white-space:nowrap}
 .chip b{color:var(--accent)}
-main{flex:1;overflow-y:auto;padding-block:16px 24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));}
+main{flex:1;overflow-y:auto;overflow-x:hidden;padding-block:16px 24px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));}
 nav.tabs{display:grid;grid-template-columns:repeat(5,1fr);background:var(--panel);border-top:1px solid var(--line);
   padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px)}
 nav.tabs button{background:none;border:0;color:var(--muted);font:500 12px var(--f-body);padding:10px 2px 12px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
@@ -418,12 +418,30 @@ nav.tabs button[aria-selected="true"] svg{background:var(--grad);box-shadow:0 4p
 .q{font-size:20px}
 /* Sachet holographique */
 .solo{display:flex;justify-content:center;position:relative;padding:6px 0 4px}
-.solo::before{content:"";position:absolute;inset:0 -10%;background:radial-gradient(ellipse 55% 50% at 50% 50%,#b9a6ff40,#ff9fd226 45%,transparent 70%);pointer-events:none}
+.solo::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 55% 50% at 50% 50%,#b9a6ff40,#ff9fd226 45%,transparent 70%);pointer-events:none}
 .solo .pack{width:min(250px,64vw)}
 .pack,.bigpack{aspect-ratio:500/800}
 .pack{filter:drop-shadow(0 26px 30px #000b) drop-shadow(0 0 30px #b9a6ff66)}
 .pk2{display:block;width:100%;height:100%;overflow:visible}
 .bigpack{width:min(270px,64vw);filter:drop-shadow(0 30px 40px #000c) drop-shadow(0 0 40px #b9a6ff55)}
+/* Confort tactile */
+button,a,summary,input{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.btn:not(:disabled):active,.filters button:active,.opts button:not(:disabled):active{transform:scale(.97)}
+input[type=number],input[type=search]{font-size:16px}
+.search{display:flex;align-items:center;gap:8px;background:#ffffff0c;border:1px solid var(--hi);border-radius:14px;padding:0 12px;color:var(--muted)}
+.search:focus-within{border-color:var(--accent2)}
+.search svg{width:18px;height:18px;flex:none}
+.search input{flex:1;min-width:0;background:none;border:0;color:var(--fg);padding:12px 0;outline:none;font-family:var(--f-body)}
+.sheet{position:relative}
+.xbtn{position:sticky;top:0;align-self:flex-end;margin:-6px -6px -44px 0;z-index:5;width:36px;height:36px;border-radius:50%;border:1px solid var(--hi);background:#15131fd9;color:var(--fg);font-size:15px;cursor:pointer}
+.hp{grid-template-columns:1fr 12px 1fr}
+.hpl{font:700 11px var(--f-mono);text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hpv{font-size:13px;margin-top:4px}
+.hpbar.foe{display:flex}
+.result.win{border-color:#4fd18b66;background:linear-gradient(180deg,#4fd18b1f,#1a1727)}
+.result.lose{border-color:#ff5d7355}
+.result .row .btn{flex:1 1 180px}
+.cback.locked{cursor:pointer}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 
@@ -605,9 +623,10 @@ function score(){ return Object.keys(S.owned).reduce((a,id)=>a+value(id,S.owned[
 // ---------- Utilitaires ----------
 const $ = s=>document.querySelector(s);
 const pick = a=>a[Math.floor(Math.random()*a.length)];
+const norm = t=>String(t).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
 const shuffle = a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const esc = s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-function toast(msg){ const t=document.createElement("div"); t.className="toast"; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2200); }
+function toast(msg){ document.querySelectorAll(".toast").forEach(x=>x.remove()); const t=document.createElement("div"); t.setAttribute("role","status"); t.className="toast"; t.textContent=msg; document.body.appendChild(t); setTimeout(()=>t.remove(),2200); }
 function rollRarity(){ let x=Math.random()*100; for(const k of ORDER){ if((x-=RAR[k].w)<0) return k; } return "C"; }
 function drawCard(theme){ const r=rollRarity(); let pool=CARDS.filter(c=>c.r===r);
   if(theme&&theme.cats&&Math.random()<0.8){ const t=pool.filter(c=>theme.cats.includes(c.cat)); if(t.length) pool=t; }
@@ -740,6 +759,7 @@ function cardHTML(id,{holo=false,count=0,unknown=false}={}){
 }
 
 // ---------- Horloge : boosters + enchères ----------
+let lastStock=null;
 function tick(){
   const now=Date.now();
   if(S.stock>=MAXSTOCK){ S.lastRegen=now; }
@@ -747,6 +767,8 @@ function tick(){
   marketTick(now);
   $("#likes").textContent=S.likes.toLocaleString("fr-FR");
   $("#stockTop").textContent=S.stock;
+  if(lastStock!==null && S.stock!==lastStock && current==="boosters" && !document.querySelector(".opening")) render();
+  lastStock=S.stock;
   const cd=$("#cd"); if(cd) cd.textContent = S.stock>=MAXSTOCK?"Stock plein":mmss(REGEN-(now-S.lastRegen));
   document.querySelectorAll("[data-end]").forEach(el=>{ el.textContent=mmss(+el.dataset.end-now); });
   save();
@@ -778,7 +800,7 @@ function marketTick(now){
 }
 
 // ---------- Vues ----------
-let current="boosters", filter="all", lastPull=null, duel=null;
+let current="boosters", filter="all", query="", lastPull=null, duel=null;
 const views={
 boosters(){
   const now=Date.now(), t=PACKS[selPack];
@@ -800,15 +822,19 @@ boosters(){
   </div>`;
 },
 album(){
-  const ids=CARDS.filter(c=>filter==="all"||filter==="fav"?true:c.r===filter).filter(c=>filter!=="fav"||S.fav.includes(c.id));
+  const q=norm(query);
+  const ids=CARDS.filter(c=>filter==="all"||filter==="fav"||filter==="mine"?true:c.r===filter)
+    .filter(c=>filter!=="fav"||S.fav.includes(c.id)).filter(c=>filter!=="mine"||S.owned[c.id])
+    .filter(c=>!q||norm(c.name).includes(q)||norm(c.cat).includes(q));
   const own=Object.keys(S.owned).length, pct=Math.round(own/CARDS.length*100);
   return `<div class="stack">
     <div class="phead"><span class="eyebrow">Collection</span><h2>Album</h2></div>
     <div class="box sumbox"><div class="ring" style="--p:${pct}"><b>${pct}%</b></div>
       <div class="stack" style="gap:8px;min-width:0"><div><b class="mono" style="font-size:18px">${own}</b> <span class="sub">/ ${CARDS.length} youtubeurs découverts</span></div>
       <div class="rchips">${ORDER.map(k=>{const tot=CARDS.filter(c=>c.r===k).length, got=CARDS.filter(c=>c.r===k&&S.owned[c.id]).length; return `<div class="rchip" style="--c:${RAR[k].c}"><span>${RAR[k].name}</span><b>${got}/${tot}</b></div>`;}).join("")}</div></div></div>
-    <div class="filters">${[["all","Toutes"],["fav","★ Favoris"],...ORDER.map(k=>[k,RAR[k].name])].map(([k,l])=>`<button data-filter="${k}" aria-pressed="${filter===k}">${l}</button>`).join("")}</div>
-    <div class="grid">${ids.map(c=>{const o=S.owned[c.id]; return o?cardHTML(c.id,{holo:o.h>0,count:o.n}):cardHTML(c.id,{unknown:true});}).join("")||`<p class="sub">Aucune carte ici pour l'instant.</p>`}</div>
+    <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="q" type="search" placeholder="Chercher un youtubeur ou une catégorie" value="${esc(query)}" autocomplete="off" aria-label="Chercher dans l'album"></label>
+    <div class="filters">${[["all","Toutes"],["mine","Mes cartes"],["fav","★ Favoris"],...ORDER.map(k=>[k,RAR[k].name])].map(([k,l])=>`<button data-filter="${k}" aria-pressed="${filter===k}">${l}</button>`).join("")}</div>
+    <div class="grid">${ids.map(c=>{const o=S.owned[c.id]; return o?cardHTML(c.id,{holo:o.h>0,count:o.n}):cardHTML(c.id,{unknown:true});}).join("")||`<p class="sub" style="grid-column:1/-1">${q?"Aucun youtubeur ne correspond à ta recherche.":"Aucune carte ici pour l'instant."}</p>`}</div>
   </div>`;
 },
 encheres(){
@@ -848,9 +874,11 @@ duel(){
   const d=duel, Q=d.qs[d.i];
   return `<div class="stack">
     <div class="duo"><div>${cardHTML(d.me,{holo:d.meHolo})}</div><div class="vs">VS</div><div>${cardHTML(d.foe,{})}</div></div>
-    <div class="hp"><div class="hpbar"><i style="width:${d.hp/d.max*100}%"></i></div><span class="mono">${d.hp} · ${d.fhp}</span><div class="hpbar foe"><i style="width:${d.fhp/d.max*100}%"></i></div></div>
+    <div class="hp"><div><div class="hpl">Toi</div><div class="hpbar"><i style="width:${d.hp/d.max*100}%"></i></div><div class="mono hpv">${d.hp}</div></div><span></span><div style="text-align:right"><div class="hpl">${esc(d.bot)}</div><div class="hpbar foe"><i style="width:${d.fhp/d.max*100}%;margin-left:auto"></i></div><div class="mono hpv">${d.fhp}</div></div></div>
     <p class="sub">Contre ${esc(d.bot)} · Question ${Math.min(d.i+1,5)} / 5</p>
-    ${d.over?`<div class="box stack"><h2>${d.over==="win"?"Victoire ! +60 ♥":d.over==="draw"?"Égalité":"Défaite"}</h2><button class="btn" id="endDuel">Retour</button></div>`
+    ${d.over?`<div class="box stack result ${d.over}"><span class="eyebrow">${d.over==="win"?"Bravo":"Fin du duel"}</span><h2>${d.over==="win"?"Victoire !":d.over==="draw"?"Égalité":"Défaite"}</h2>
+      <p class="sub" style="margin:0">${d.good||0} bonne${(d.good||0)>1?"s":""} réponse${(d.good||0)>1?"s":""} sur 5${d.over==="win"?" · +60 ♥":""}</p>
+      <div class="row"><button class="btn" id="endDuel">Retour à l'arène</button>${S.duels.n<DUELS_PER_DAY?`<button class="btn ghost" id="again">Rejouer avec la même carte</button>`:""}</div></div>`
     :`<div class="q">${esc(Q.q)}</div><div class="opts">${Q.o.map((o,i)=>`<button data-ans="${i}" class="${d.answered!=null?(i===Q.a?"ok":i===d.answered?"ko":""):""}" ${d.answered!=null?"disabled":""}>${esc(o)}</button>`).join("")}</div>
       ${d.msg?`<p class="sub">${esc(d.msg)}</p>`:""}
       ${d.answered!=null?`<button class="btn" id="nextQ">${d.i<4?"Question suivante":"Voir le résultat"}</button>`:""}`}
@@ -960,7 +988,7 @@ function playOpening(theme=PACKS[0]){
     const el=cards[idx], r=el.dataset.r;
     el.classList.add("cur"); el.classList.remove("down");
     count.textContent=`${idx+1} / ${cards.length}`;
-    if(r==="L"||r==="E"){ pulse(RAR[r].c); ov.classList.add("big-"+r); } else { ov.classList.remove("big-L","big-E"); }
+    if(r==="L"||r==="E"){ pulse(RAR[r].c); ov.classList.add("big-"+r); try{ navigator.vibrate&&navigator.vibrate(r==="L"?[40,60,80]:40); }catch(e){} } else { ov.classList.remove("big-L","big-E"); }
     hint.textContent = idx===cards.length-1 ? "Touche pour voir le récap" : "Touche pour la carte suivante";
     // petit délai pour laisser la carte se retourner avant d'accepter le toucher suivant
     lock=true; setTimeout(()=>{ lock=false; }, reduce?100:450);
@@ -1022,7 +1050,7 @@ function answer(i){
   const d=duel, Q=d.qs[d.i]; d.answered=i;
   const me=BY[d.me], foe=BY[d.foe], m=d.meHolo?1.1:1;
   const msgs=[];
-  if(i===Q.a){ const dmg=Math.max(80,Math.round(me.atk*m-foe.def*0.5)); d.fhp=Math.max(0,d.fhp-dmg); msgs.push(`Bonne réponse : ${me.name} inflige ${dmg}.`); }
+  if(i===Q.a){ d.good=(d.good||0)+1; const dmg=Math.max(80,Math.round(me.atk*m-foe.def*0.5)); d.fhp=Math.max(0,d.fhp-dmg); msgs.push(`Bonne réponse : ${me.name} inflige ${dmg}.`); }
   else msgs.push("Raté.");
   if(Math.random()<0.6){ const dmg=Math.max(80,Math.round(foe.atk-me.def*m*0.5)); d.hp=Math.max(0,d.hp-dmg); msgs.push(`${d.bot} répond juste : ${foe.name} inflige ${dmg}.`); }
   else msgs.push(`${d.bot} se trompe.`);
@@ -1044,7 +1072,8 @@ function openCard(id){
   if(!o){ return; }
   const holo=o.h>0;
   const recycle=Math.round(value(id,false)*0.4);
-  $("#modalRoot").innerHTML=`<div class="modal" id="modal"><div class="sheet" role="dialog" aria-label="${esc(c.name)}">
+  $("#modalRoot").innerHTML=`<div class="modal" id="modal"><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(c.name)}">
+    <button class="xbtn" data-act="close" aria-label="Fermer">✕</button>
     <div class="big" data-tilt>${cardHTML(id,{holo,count:o.n})}</div>
     <dl class="kv">
       <dt>Rareté</dt><dd>${R.name}${holo?" · Holo":""}</dd>
@@ -1088,6 +1117,12 @@ function closeModal(){ $("#modalRoot").innerHTML=""; }
 
 // ---------- Événements ----------
 document.querySelector("nav.tabs").addEventListener("click",e=>{ const b=e.target.closest("button[data-tab]"); if(b){ if(b.dataset.tab!=="duel"||!duel||duel.over) {} go(b.dataset.tab);} });
+$("#view").addEventListener("input",e=>{
+  if(e.target.id!=="q") return;
+  query=e.target.value;
+  const tmp=document.createElement("div"); tmp.innerHTML=views.album();
+  const g=$("#view .grid"), ng=tmp.querySelector(".grid"); if(g&&ng) g.replaceWith(ng);
+});
 $("#view").addEventListener("click",e=>{
   const t=e.target;
   if(t.closest("#pack")||t.closest("#openSel")) return openPack(false,PACKS[selPack]);
@@ -1105,11 +1140,13 @@ $("#view").addEventListener("click",e=>{
   const ans=t.closest("[data-ans]"); if(ans) return answer(+ans.dataset.ans);
   if(t.closest("#nextQ")) return nextQ();
   if(t.closest("#endDuel")){ duel=null; return render(); }
+  if(t.closest("#again")){ const id=duel.me; duel=null; return startDuel(id); }
   if(t.closest("#reset")){ if(t.dataset.confirm){ S=fresh(); lastPull=null; duel=null; save(); tick(); return render(); } t.dataset.confirm="1"; t.textContent="Confirmer la réinitialisation"; return; }
+  if(t.closest(".cback.locked")) return toast("Pas encore découvert");
   const c=t.closest("[data-card]");
   if(c){
     if(current==="duel" && !duel) return startDuel(c.dataset.card);
-    if(current==="boosters"||current==="duel") return;
+    if(current==="duel") return;
     if(c.closest(".lot")) return;
     return openCard(c.dataset.card);
   }

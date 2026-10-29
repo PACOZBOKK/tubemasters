@@ -209,7 +209,8 @@ h3{font-size:16px;font-weight:600}
 @keyframes flash{0%{opacity:.85}100%{opacity:0}}
 .bigpack{position:relative;width:min(240px,58vw);aspect-ratio:5/7.4;container-type:inline-size;filter:drop-shadow(0 30px 40px #000c)}
 .bigpack .half{position:absolute;inset:0}
-.opening.shaking .bigpack{animation:bigshake .9s ease-in-out}
+.opening.shaking .bigpack{animation:wobble 2.2s ease-in-out infinite}
+@keyframes wobble{0%,100%{transform:rotate(-2deg) translateY(0)}50%{transform:rotate(2deg) translateY(-8px)}}
 @keyframes bigshake{0%,100%{transform:none}15%{transform:rotate(-5deg) scale(1.02)}30%{transform:rotate(5deg) scale(1.04)}45%{transform:rotate(-6deg) scale(1.06)}60%{transform:rotate(6deg) scale(1.08)}75%{transform:rotate(-3deg) scale(1.1)}}
 .opening.torn .tp{animation:tear .6s cubic-bezier(.3,.7,.4,1) forwards}
 @keyframes tear{to{transform:translate(70px,-180px) rotate(28deg);opacity:0}}
@@ -419,7 +420,7 @@ nav.tabs button[aria-selected="true"] svg{background:var(--grad);box-shadow:0 4p
 .solo{display:flex;justify-content:center;position:relative;padding:6px 0 4px}
 .solo::before{content:"";position:absolute;inset:0 -10%;background:radial-gradient(ellipse 55% 50% at 50% 50%,#b9a6ff40,#ff9fd226 45%,transparent 70%);pointer-events:none}
 .solo .pack{width:min(250px,64vw)}
-.pack,.bigpack{aspect-ratio:500/740}
+.pack,.bigpack{aspect-ratio:500/800}
 .pack{filter:drop-shadow(0 26px 30px #000b) drop-shadow(0 0 30px #b9a6ff66)}
 .pk2{display:block;width:100%;height:100%;overflow:visible}
 .bigpack{width:min(270px,64vw);filter:drop-shadow(0 30px 40px #000c) drop-shadow(0 0 40px #b9a6ff55)}
@@ -460,6 +461,13 @@ nav.tabs button[aria-selected="true"] svg{background:var(--grad);box-shadow:0 4p
       <stop offset=".52" stop-color="#fff" stop-opacity=".95"/><stop offset=".7" stop-color="#fff" stop-opacity="0"/>
       <animateTransform attributeName="gradientTransform" type="translate" values="-1 0;1 0;1 0" keyTimes="0;.6;1" dur="4.5s" repeatCount="indefinite"/>
     </linearGradient>
+    <linearGradient id="tmCrimp" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#c9c3d6"/><stop offset=".2" stop-color="#ffffff"/><stop offset=".45" stop-color="#b7f0ff"/>
+      <stop offset=".6" stop-color="#ffd1f0"/><stop offset=".8" stop-color="#ffffff"/><stop offset="1" stop-color="#bdb5cc"/>
+    </linearGradient>
+    <pattern id="tmRidges" width="6" height="10" patternUnits="userSpaceOnUse"><rect width="3" height="10" fill="#2a1d3a" fill-opacity=".22"/></pattern>
+    <linearGradient id="tmCardBack" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3b2a6e"/><stop offset=".5" stop-color="#5b2bd6"/><stop offset="1" stop-color="#1f1640"/></linearGradient>
+    <radialGradient id="tmGlow"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset=".45" stop-color="#fff" stop-opacity=".25"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
     <filter id="tmFoil" filterUnits="userSpaceOnUse" x="-160" y="-160" width="820" height="1060" color-interpolation-filters="sRGB">
       <feTurbulence type="fractalNoise" baseFrequency="0.007 0.012" numOctaves="3" seed="11" result="n"/>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="220" xChannelSelector="R" yChannelSelector="B" result="d"/>
@@ -506,19 +514,34 @@ const RAW = [
  ["Sylvain Lyve",1,"Tech"],["PV Nova",1,"Musique"],["Horia",1,"Lifestyle"],["Rivenzi",0.8,"Gaming"],
  ["ScienceClic",0.8,"Science"],["Mynthos",0.7,"Gaming"],["Balade Mentale",0.6,"Science"],["Bruno Maltor",0.6,"Voyage"],
  ["Baghera Jones",0.5,"Gaming"],["Etoiles",0.5,"Gaming"],["Ultia",0.5,"Gaming"],["Hygiène Mentale",0.5,"Science"],
- ["Linguisticae",0.5,"Culture"],["Underscore_",0.5,"Tech"]
+ ["Linguisticae",0.5,"Culture"],["Underscore_",0.5,"Tech"],
+ ["Golden Moustache",4.2,"Humour"],["Palmashow",2.3,"Humour"],["TheFantasio974",2.3,"Gaming"],["Bigflo & Oli",1.8,"Musique"],
+ ["Tonton",1.7,"Gaming"],["Fanta et Bob",1.7,"Gaming"],["Hugo Tout Seul",1.6,"Humour"],["Fabien Olicard",1.6,"Insolite"],
+ ["Le Monde de Jamy",1.6,"Science"],["Hervé Cuisine",1.5,"Cuisine"],["Anyme023",1.4,"Divertissement"],["Lutti",1.4,"Gaming"],
+ ["Nassim Sahili",1.3,"Sport"],["Gaspard G",1.2,"Actu"],["Kinstaar",1.2,"Gaming"],["Bodytime",1.1,"Sport"],
+ ["Jamcore",1.1,"Sport"],["Mister Geopolitix",1.1,"Culture"],["Alt 236",1,"Culture"],["Experimental Boy",1,"Science"],
+ ["Philippe Etchebest",1,"Cuisine"],["Fukano",1,"Gaming"],["Ahmed Sylla",1,"Humour"],["Inès Reg",1,"Humour"],
+ ["Lufy",0.9,"Beauté"],["Lolywood",0.8,"Humour"],["Benoît Chevalier",0.8,"Divertissement"],["Astronogeek",0.8,"Science"],
+ ["Feldup",0.8,"Insolite"],["Lucile Woodward",0.7,"Sport"],["Morgan VS",0.6,"Cuisine"],["Major Mouvement",0.6,"Sport"],
+ ["Le Cinéma de Durendal",0.6,"Culture"],["Alderiate",0.6,"Gaming"],["Benzaie",0.6,"Gaming"],["Hctuan",0.6,"Gaming"],
+ ["Skyyart",0.6,"Gaming"],["Ermite Moderne",0.5,"Culture"],["Cyrus North",0.5,"Culture"],["Elsa Makeup",0.5,"Beauté"],
+ ["Gom4rt",0.5,"Gaming"],["Hedacademy",0.5,"Éducation"],["Graven",0.5,"Tech"],["Shaunz",0.5,"Gaming"],
+ ["Juan Arbelaez",0.4,"Cuisine"],["Defakator",0.4,"Science"],["Science4All",0.4,"Science"],["Monsieur GRrr",0.4,"Tech"],
+ ["Mister MV",0.4,"Gaming"],["Grafikart",0.3,"Tech"]
 ];
 const RAR = {
-  L:{name:"Légendaire",min:14,val:2000,c:"var(--r-l)",w:1.5},
-  E:{name:"Épique",min:7,val:500,c:"var(--r-e)",w:6},
-  R:{name:"Rare",min:3.5,val:150,c:"var(--r-r)",w:13},
-  U:{name:"Peu commune",min:2,val:50,c:"var(--r-u)",w:25},
+  L:{name:"Légendaire",min:10,val:2000,c:"var(--r-l)",w:1.5},
+  E:{name:"Épique",min:5,val:500,c:"var(--r-e)",w:6},
+  R:{name:"Rare",min:2.5,val:150,c:"var(--r-r)",w:13},
+  U:{name:"Peu commune",min:1.2,val:50,c:"var(--r-u)",w:25},
   C:{name:"Commune",min:0,val:20,c:"var(--r-c)",w:54.5}
 };
 const ORDER = ["L","E","R","U","C"];
+// La rareté dépend uniquement du nombre d'abonnés (et suit les chiffres en direct de l'API)
+const rarityOf = subs => ORDER.find(k=>subs>=RAR[k].min);
 function hash(s){let h=2166136261;for(const ch of s){h^=ch.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
 const CARDS = RAW.map(([name,subs,cat],i)=>{
-  const r = ORDER.find(k=>subs>=RAR[k].min);
+  const r = rarityOf(subs);
   const h = hash(name);
   const initials = name.replace(/&/g,"").split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0]).join("").toUpperCase();
   const bonus = {L:300,E:200,R:120,U:60,C:0}[r];
@@ -587,56 +610,65 @@ function backHTML(label="",attrs="",cls=""){ return `<${attrs?"button":"div"} cl
 const PACKS=[{k:"classic",name:"Booster",sub:"Tous les youtubeurs",cats:null,glow:"#b9a6ff"}];
 const PK=Object.fromEntries(PACKS.map(p=>[p.k,p]));
 let selPack=0;
-// Sachet holographique : un seul SVG (viewBox 500×740) qui réutilise les dégradés et filtres
-// déclarés une fois dans #tmDefs (voir bas de page).
-const PACK_PATH="M42,30 H168 L186,8 H314 L332,30 H458 Q476,30 478,48 V70 L490,78 V96 L478,104 C486,260 472,430 482,560 C486,640 478,690 478,708 Q476,730 458,730 H42 Q24,730 22,708 C22,690 14,640 18,560 C28,430 14,260 22,104 L10,96 V78 L22,70 V48 Q24,30 42,30 Z";
-const PACK_SWIRL=(()=>{ let d=""; const cx=300,cy=330;
-  for(let i=0;i<64;i++){ const a=i/64*Math.PI*2, r=420;
+// Booster façon TCG : corps holographique, bandes serties en haut et en bas,
+// logo en haut, éventail de cartes et médaillon au centre. viewBox 500×800.
+const PACK_SWIRL=(()=>{ let d=""; const cx=250,cy=420;
+  for(let i=0;i<72;i++){ const a=i/72*Math.PI*2, r=520;
     const x2=cx+Math.cos(a)*r, y2=cy+Math.sin(a)*r;
-    const qx=cx+Math.cos(a+1.15)*150, qy=cy+Math.sin(a+1.15)*150;
+    const qx=cx+Math.cos(a+1.1)*170, qy=cy+Math.sin(a+1.1)*170;
     d+=`M${cx},${cy} Q${qx.toFixed(1)},${qy.toFixed(1)} ${x2.toFixed(1)},${y2.toFixed(1)} `; }
   return d; })();
-const PACK_BARS=(()=>{ let x=52, out=""; const w=[3,1,2,1,4,1,1,3,2,1,1,2,4,1,3,1,2,2,1,4,1,1,3,1,2,1,3,2,1,1,4,2];
-  w.forEach((v,i)=>{ if(i%2===0) out+=`<rect x="${x}" y="676" width="${v}" height="34"/>`; x+=v+1.2; }); return out; })();
+const PACK_BARS=(()=>{ let x=46, out=""; const w=[3,1,2,1,4,1,1,3,2,1,1,2,4,1,3,1,2,2,1,4,1,1,3,1,2,1];
+  w.forEach((v,i)=>{ if(i%2===0) out+=`<rect x="${x}" y="676" width="${v}" height="28"/>`; x+=v+1.1; }); return out; })();
 function packHTML(){
   const N=++PACK_N;
   const D="style=\"font-family:var(--f-display)\"", M="style=\"font-family:var(--f-mono)\"";
-  return `<svg class="pk2" viewBox="0 0 500 740" aria-hidden="true">
-    <g clip-path="url(#tmClip)">
-      <rect x="-160" y="-160" width="820" height="1060" fill="url(#tmIri)" filter="url(#tmFoil)"/>
-      <rect width="500" height="740" fill="url(#tmSheen)" style="mix-blend-mode:soft-light"/>
-      <path d="M22,104 H478" stroke="#fff" stroke-opacity=".7" stroke-width="2" stroke-dasharray="7 6"/>
-      <path d="M22,112 H478" stroke="#2a1d3a" stroke-opacity=".18" stroke-width="2"/>
-      <text x="250" y="84" text-anchor="middle" ${D} font-weight="800" font-size="70" textLength="440" lengthAdjust="spacingAndGlyphs" fill="none" stroke="#14101d" stroke-opacity=".45" stroke-width="1.6">TUBEMASTERS</text>
-      <text x="250" y="168" text-anchor="middle" ${D} font-weight="800" font-size="70" textLength="440" lengthAdjust="spacingAndGlyphs" fill="#14101d">TUBEMASTERS</text>
-      <text x="250" y="202" text-anchor="middle" ${M} font-weight="700" font-size="20" letter-spacing="26" fill="#14101d">BOOSTER</text>
-      <g>
-        <rect x="72" y="222" width="356" height="418" rx="12" fill="#ffffff" fill-opacity=".14"/>
-        <clipPath id="tmWin_${N}"><rect x="72" y="222" width="356" height="418" rx="12"/></clipPath>
-        <path d="${PACK_SWIRL}" clip-path="url(#tmWin_${N})" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.6"/>
-        <rect x="74" y="224" width="356" height="418" rx="12" fill="none" stroke="#2a1d3a" stroke-opacity=".28" stroke-width="3"/>
-        <rect x="72" y="222" width="356" height="418" rx="12" fill="none" stroke="#fff" stroke-opacity=".85" stroke-width="3"/>
-      </g>
-      <g transform="translate(150 548)">
-        <circle r="50" fill="url(#tmIri2)" stroke="#fff" stroke-width="3"/>
-        <circle r="50" fill="none" stroke="#2a1d3a" stroke-opacity=".25" stroke-width="1.5" transform="translate(1.5 1.5)"/>
-        <rect x="-26" y="-18" width="52" height="36" rx="10" fill="#fff" fill-opacity=".9"/>
-        <path d="M-7,-10 L12,0 L-7,10 Z" fill="#ff2d55"/>
-      </g>
-      <text transform="translate(462 236) rotate(90)" ${M} font-weight="700" font-size="13" letter-spacing="5" fill="#14101d" fill-opacity=".75">YOUTUBE FR · SAISON 1 · 5 CARTES</text>
-      <text x="52" y="664" ${D} font-weight="800" font-size="34" letter-spacing="-1" fill="#14101d">Tube<tspan font-style="italic">Masters</tspan></text>
-      <g fill="#14101d">${PACK_BARS}</g>
-      <text x="200" y="694" ${M} font-size="13" fill="#14101d" fill-opacity=".8">\\\\ 05</text>
-      <text x="250" y="694" ${M} font-size="13" fill="#14101d" fill-opacity=".8">▶ ▶ ×</text>
-      <text x="200" y="712" ${M} font-size="11" letter-spacing="2" fill="#14101d" fill-opacity=".7">TM1 · 128 · FR</text>
-      <g transform="translate(404 676)" fill="none" stroke="#14101d" stroke-width="2.2">
-        <circle r="40"/><ellipse rx="17" ry="40"/><ellipse rx="34" ry="40"/><path d="M-40,0 H40 M-36,-18 H36 M-36,18 H36"/>
-        <rect x="-50" y="-11" width="100" height="22" rx="11" fill="url(#tmIri2)" stroke="#14101d"/>
-        <text y="5" text-anchor="middle" ${D} font-weight="800" font-size="14" letter-spacing=".5" fill="#14101d" stroke="none">YOUTUBE FR</text>
+  const top=`M0,7 ${Array.from({length:25},(_,i)=>`L${i*20+10},0 L${i*20+20},7`).join(" ")} V58 H0 Z`;
+  const bot=`M0,742 H500 V793 ${Array.from({length:25},(_,i)=>`L${500-i*20-10},800 L${500-i*20-20},793`).join(" ")} Z`;
+  const fan=[-16,0,16].map((r,i)=>`<g transform="translate(250 430) rotate(${r}) translate(-62 -88)"><rect width="124" height="176" rx="12" fill="url(#tmCardBack)" stroke="#fff" stroke-width="3.5"/><rect x="8" y="8" width="108" height="160" rx="7" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="1.5"/></g>`).join("");
+  return `<svg class="pk2" viewBox="0 0 500 800" aria-hidden="true">
+    <clipPath id="tmBody_${N}"><rect x="0" y="50" width="500" height="700"/></clipPath>
+    <g clip-path="url(#tmBody_${N})">
+      <rect x="-160" y="-160" width="820" height="1120" fill="url(#tmIri)" filter="url(#tmFoil)"/>
+      <path d="${PACK_SWIRL}" fill="none" stroke="#fff" stroke-opacity=".38" stroke-width="1.4"/>
+      <circle cx="250" cy="430" r="190" fill="url(#tmGlow)"/>
+      <rect x="0" y="0" width="500" height="800" fill="url(#tmSheen)" style="mix-blend-mode:soft-light"/>
+      <rect x="0" y="50" width="10" height="700" fill="#fff" fill-opacity=".35"/><rect x="490" y="50" width="10" height="700" fill="#2a1d3a" fill-opacity=".18"/>
+    </g>
+    <!-- Logo -->
+    <g transform="translate(250 128)">
+      <text text-anchor="middle" ${D} font-weight="800" font-size="74" textLength="420" lengthAdjust="spacingAndGlyphs" fill="#14101d" stroke="#fff" stroke-width="12" stroke-linejoin="round" paint-order="stroke">TUBEMASTERS</text>
+      <g transform="translate(0 40)">
+        <rect x="-92" y="-18" width="184" height="34" rx="17" fill="#14101d"/>
+        <text y="6" text-anchor="middle" ${M} font-weight="700" font-size="17" letter-spacing="9" fill="#fff">BOOSTER</text>
       </g>
     </g>
-    <path d="${PACK_PATH}" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="3"/>
-    <path d="${PACK_PATH}" fill="none" stroke="#2a1d3a" stroke-opacity=".35" stroke-width="1" transform="translate(0 2)"/>
+    <!-- Illustration centrale -->
+    ${fan}
+    <g transform="translate(250 430)">
+      <circle r="78" fill="url(#tmIri2)" stroke="#fff" stroke-width="6"/>
+      <circle r="66" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>
+      <rect x="-40" y="-28" width="80" height="56" rx="16" fill="#ff1f4b" stroke="#fff" stroke-width="4"/>
+      <path d="M-11,-15 L19,0 L-11,15 Z" fill="#fff"/>
+    </g>
+    <text transform="translate(470 250) rotate(90)" ${M} font-weight="700" font-size="13" letter-spacing="5" fill="#14101d" fill-opacity=".7">YOUTUBE FR · CARTES À COLLECTIONNER</text>
+    <!-- Bandeau bas -->
+    <g transform="translate(250 640)">
+      <path d="M-170,-24 H170 L184,0 L170,24 H-170 L-184,0 Z" fill="#14101d"/>
+      <text y="8" text-anchor="middle" ${D} font-weight="800" font-size="24" fill="#fff">5 CARTES PAR BOOSTER</text>
+    </g>
+    <g fill="#14101d">${PACK_BARS}</g>
+    <text x="46" y="722" ${M} font-size="11" letter-spacing="2" fill="#14101d" fill-opacity=".75">TM · ${CARDS.length} YOUTUBEURS</text>
+    <g transform="translate(410 698)" fill="none" stroke="#14101d" stroke-width="2.2">
+      <circle r="30"/><ellipse rx="13" ry="30"/><ellipse rx="25" ry="30"/><path d="M-30,0 H30 M-27,-14 H27 M-27,14 H27"/>
+      <rect x="-44" y="-10" width="88" height="20" rx="10" fill="url(#tmIri2)" stroke="#14101d"/>
+      <text y="5" text-anchor="middle" ${D} font-weight="800" font-size="12.5" fill="#14101d" stroke="none">YOUTUBE FR</text>
+    </g>
+    <!-- Bandes serties -->
+    <path d="${top}" fill="url(#tmCrimp)"/><path d="${bot}" fill="url(#tmCrimp)"/>
+    <rect x="0" y="12" width="500" height="44" fill="url(#tmRidges)" opacity=".55"/><rect x="0" y="744" width="500" height="44" fill="url(#tmRidges)" opacity=".55"/>
+    <path d="M0,58 H500 M0,742 H500" stroke="#2a1d3a" stroke-opacity=".35" stroke-width="2"/>
+    <path d="M0,61 H500 M0,739 H500" stroke="#fff" stroke-opacity=".7" stroke-width="1.5"/>
   </svg>`;
 }
 let PACK_N=0;
@@ -686,7 +718,7 @@ function cardHTML(id,{holo=false,count=0,unknown=false}={}){
   const [n,u]=fmtSubs(c.subs).split(" ");
   return `<button class="card r-${c.r} ${holo?"holo":""}" style="--h:${c.hue};--th:${T[0]}" data-card="${id}" aria-label="${esc(c.name)}, ${R.name}${holo?" holo":""}">
     <div class="frame">
-      <div class="stage">Youtubeur · Saison 1${holo?" · Holo":""}</div>
+      <div class="stage">Youtubeur${holo?" · Holo":""}</div>
       <div class="head"><span class="nm">${esc(c.name)}</span>${orb(tk)}</div>
       <div class="art">${c.img?`<img class="ph" src="${esc(c.img)}" alt="" loading="lazy" referrerpolicy="no-referrer">`:svgI(ICONS[tk]||ICONS.Divertissement)}${holo?`<span class="hol"></span>`:""}</div>
       <div class="cap">${esc(c.cat)} · ${R.name}</div>
@@ -694,7 +726,7 @@ function cardHTML(id,{holo=false,count=0,unknown=false}={}){
         <div class="subs"><b>${n}</b><small>${u==="M"?"millions":"mille"}<br>d'abonnés</small></div>
         <div class="flav">${esc(FLAV[tk])}</div>
       </div>
-      <div class="foot"><span class="set"><i></i>TM1 · ${num}/${tot}</span><span class="rs" title="${R.name}">${RSYM[c.r]}</span></div>
+      <div class="foot"><span class="set"><i></i>TM · ${num}/${tot}</span><span class="rs" title="${R.name}">${RSYM[c.r]}</span></div>
     </div>${count>1?`<em class="cnt">×${count}</em>`:""}<span class="glare"></span></button>`;
 }
 
@@ -742,7 +774,7 @@ const views={
 boosters(){
   const now=Date.now(), t=PACKS[selPack];
   return `<div class="shop">
-    <div class="phead"><span class="eyebrow">Saison 1 · Youtube FR</span><h2>Boosters</h2><p class="sub">5 cartes par booster, tirées parmi les ${CARDS.length} youtubeurs de la saison.</p></div>
+    <div class="phead"><span class="eyebrow">Youtube FR</span><h2>Boosters</h2><p class="sub">5 cartes par booster, tirées parmi les ${CARDS.length} youtubeurs du jeu.</p></div>
     <div class="solo"><div class="pack-wrap"><button class="pack" id="pack" data-tilt ${S.stock?"":"disabled"} aria-label="Ouvrir un booster">${packHTML()}</button></div></div>
     <div class="box openbar">
       <div class="top"><div><div class="lbl">Boosters en stock</div><div class="big mono">${S.stock} / ${MAXSTOCK}</div></div>
@@ -801,7 +833,7 @@ duel(){
       <div class="box duelhero"><div><div class="sub" style="margin:0">Duels restants aujourd'hui</div><b class="mono" style="font-size:20px">${left} / ${DUELS_PER_DAY}</b></div><div class="pips">${Array.from({length:DUELS_PER_DAY},(_,i)=>`<i class="${i<left?"on":""}"></i>`).join("")}</div></div>
       <h3>Choisis ta carte</h3>
       ${mine.length?`<div class="grid">${mine.map(id=>cardHTML(id,{holo:S.owned[id].h>0})).join("")}</div>`:`<p class="sub">Ouvre d'abord un booster pour avoir une carte à jouer.</p>`}
-      <p class="note">Victoire : +60 ♥. Les questions portent sur les youtubeurs de la saison.</p>
+      <p class="note">Victoire : +60 ♥. Les questions portent sur les youtubeurs du jeu.</p>
     </div>`;
   }
   const d=duel, Q=d.qs[d.i];
@@ -877,7 +909,7 @@ function openPack(silent,theme=PACKS[selPack]){
   playOpening(theme);
 }
 function zig(top){
-  const y=13, pts=[]; for(let i=0;i<=20;i++) pts.push(`${i*5}% ${y+(i%2?1.4:-1.4)}%`);
+  const y=7.6, pts=[]; for(let i=0;i<=20;i++) pts.push(`${i*5}% ${y+(i%2?1.4:-1.4)}%`);
   return top?`polygon(0 0,100% 0,${pts.reverse().join(",")})`:`polygon(${pts.join(",")},100% 100%,0 100%)`;
 }
 const DWELL={C:1300,U:1500,R:2000,E:2600,L:3200};
@@ -895,21 +927,22 @@ function playOpening(theme=PACKS[0]){
       </div>`).join("")}</div>
     <div class="flash"></div>
     <div class="ocount" aria-live="polite"></div>
-    <p class="hint">Touche pour accélérer</p>`;
+    <p class="hint">Touche le booster pour l'ouvrir</p>`;
   document.body.appendChild(ov);
   const cards=[...ov.querySelectorAll(".oc")], count=ov.querySelector(".ocount"), hint=ov.querySelector(".hint");
   let phase="shake", idx=-1, timer=null;
   const later=(fn,ms)=>{ clearTimeout(timer); timer=setTimeout(fn,reduce?Math.min(ms,300):ms); };
   const pulse=(color)=>{ ov.style.setProperty("--burst",color); ov.classList.remove("burst"); void ov.offsetWidth; ov.classList.add("burst"); };
 
+  let lock=false;
   function tear(){
-    phase="tear"; ov.classList.remove("shaking"); ov.classList.add("torn"); pulse(RAR[best].c);
+    phase="tear"; lock=true; hint.textContent="";
+    ov.classList.remove("shaking"); ov.classList.add("torn"); pulse(RAR[best].c);
     later(()=>ov.classList.add("stacked"),350);
-    later2(nextCard,1100);
+    later2(()=>{ lock=false; nextCard(); },1100);
   }
   let t2=null; function later2(fn,ms){ clearTimeout(t2); t2=setTimeout(fn,reduce?200:ms); }
   function nextCard(){
-    clearTimeout(t2); clearTimeout(timer);
     ov.classList.add("stacked","packgone");
     if(idx>=0){ cards[idx].classList.add("out"); }
     idx++;
@@ -919,8 +952,9 @@ function playOpening(theme=PACKS[0]){
     el.classList.add("cur"); el.classList.remove("down");
     count.textContent=`${idx+1} / ${cards.length}`;
     if(r==="L"||r==="E"){ pulse(RAR[r].c); ov.classList.add("big-"+r); } else { ov.classList.remove("big-L","big-E"); }
-    if(idx===cards.length-1) hint.textContent="Touche pour voir le récap";
-    later(nextCard,DWELL[r]+(pulls[idx].holo?500:0));
+    hint.textContent = idx===cards.length-1 ? "Touche pour voir le récap" : "Touche pour la carte suivante";
+    // petit délai pour laisser la carte se retourner avant d'accepter le toucher suivant
+    lock=true; setTimeout(()=>{ lock=false; }, reduce?100:450);
   }
   function recap(){
     phase="recap"; clearTimeout(timer); clearTimeout(t2);
@@ -944,13 +978,12 @@ function playOpening(theme=PACKS[0]){
       if(o.dataset.o==="again"){ ov.remove(); render(); openPack(false,theme); return; }
       return close(o.dataset.o==="album"?"album":"boosters");
     }
+    if(lock) return;
     if(phase==="shake") return tear();
-    if(phase==="tear") return nextCard();
     if(phase==="card") return nextCard();
   });
   ov.addEventListener("keydown",e=>{ if(e.key==="Escape"&&phase==="recap") close(); });
   requestAnimationFrame(()=>ov.classList.add("shaking"));
-  later(tear,1100);
 }
 
 // ---------- Duel ----------
@@ -1103,7 +1136,7 @@ async function loadLive(){
     let n=0;
     for(const c of CARDS){
       const d=data.channels[c.name]; if(!d) continue;
-      if(d.subs){ c.subs=d.subs/1e6; c.atk=Math.round(200+Math.sqrt(c.subs)*180); }
+      if(d.subs){ c.subs=d.subs/1e6; c.atk=Math.round(200+Math.sqrt(c.subs)*180); c.r=rarityOf(c.subs); }
       if(d.img) c.img=d.img;
       if(d.url) c.url=d.url;
       n++;

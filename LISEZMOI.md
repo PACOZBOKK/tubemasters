@@ -39,5 +39,5 @@ Si tu as déjà déployé sans la variable, ajoute-la dans **Settings > Environm
 
 ## Bon à savoir
 - Les données sont rafraîchies environ une fois par jour.
-- La rareté des cartes reste fixe pour la saison. Seuls les abonnés, l'attaque, la photo et le lien de la chaîne se mettent à jour.
+- La rareté dépend uniquement du nombre d'abonnés : elle suit les chiffres en direct (Légendaire ≥ 10 M, Épique ≥ 5 M, Rare ≥ 2,5 M, Peu commune ≥ 1,2 M).
 - Les photos de profil restent l'image des youtubeurs. Avant de faire payer quoi que ce soit (boosters, abonnement), demande leur accord.

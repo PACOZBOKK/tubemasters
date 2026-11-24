@@ -4,7 +4,7 @@ import SwiftUI
 import UIKit
 
 /// Fenêtre flottante (Picture in Picture) qui reste par-dessus les autres applis.
-/// On y « joue » une vidéo d'une seule image : le texte japonais dessiné.
+/// On y « joue » une vidéo d'une seule image : le texte traduit dessiné.
 @MainActor
 final class FenetreFlottante: NSObject {
     let calque = AVSampleBufferDisplayLayer()
@@ -174,7 +174,7 @@ struct ApercuFenetre: UIViewRepresentable {
 
 /// Dessine les traductions dans une image pour la fenêtre flottante.
 enum Dessin {
-    static func image(paires: [(fr: String, ja: String)], afficherFrancais: Bool, captureActive: Bool) -> UIImage {
+    static func image(paires: [(original: String, traduction: String)], afficherOriginal: Bool, captureActive: Bool) -> UIImage {
         let taille = FenetreFlottante.taille
         let format = UIGraphicsImageRendererFormat()
         format.scale = 1
@@ -188,8 +188,8 @@ enum Dessin {
             let largeur = taille.width - marge * 2
 
             guard !paires.isEmpty else {
-                let message = captureActive ? "フランス語のテキストを待っています…\nEn attente de texte français…"
-                                            : "Lance la capture d'écran dans l'appli\nキャプチャを開始してください"
+                let message = captureActive ? "En attente de texte japonais…"
+                                            : "Lance la capture d'écran dans l'appli"
                 let attributs: [NSAttributedString.Key: Any] = [
                     .font: UIFont.systemFont(ofSize: 40, weight: .semibold),
                     .foregroundColor: UIColor(white: 0.75, alpha: 1),
@@ -201,10 +201,10 @@ enum Dessin {
 
             // On réduit la police jusqu'à ce que tout tienne (ou au minimum lisible).
             var corps: CGFloat = 46
-            var blocs = construire(paires, corps: corps, afficherFrancais: afficherFrancais)
+            var blocs = construire(paires, corps: corps, afficherOriginal: afficherOriginal)
             while corps > 24 && hauteurTotale(blocs, largeur: largeur) > taille.height - marge * 2 {
                 corps -= 3
-                blocs = construire(paires, corps: corps, afficherFrancais: afficherFrancais)
+                blocs = construire(paires, corps: corps, afficherOriginal: afficherOriginal)
             }
 
             var y = marge
@@ -219,17 +219,17 @@ enum Dessin {
         }
     }
 
-    private static func construire(_ paires: [(fr: String, ja: String)], corps: CGFloat,
-                                   afficherFrancais: Bool) -> [NSAttributedString] {
+    private static func construire(_ paires: [(original: String, traduction: String)], corps: CGFloat,
+                                   afficherOriginal: Bool) -> [NSAttributedString] {
         paires.map { paire in
             let texte = NSMutableAttributedString()
-            if afficherFrancais {
-                texte.append(NSAttributedString(string: paire.fr + "\n", attributes: [
+            if afficherOriginal {
+                texte.append(NSAttributedString(string: paire.original + "\n", attributes: [
                     .font: UIFont.systemFont(ofSize: corps * 0.55),
                     .foregroundColor: UIColor(white: 0.6, alpha: 1),
                 ]))
             }
-            texte.append(NSAttributedString(string: paire.ja, attributes: [
+            texte.append(NSAttributedString(string: paire.traduction, attributes: [
                 .font: UIFont.systemFont(ofSize: corps, weight: .semibold),
                 .foregroundColor: UIColor.white,
             ]))

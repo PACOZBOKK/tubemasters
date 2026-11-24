@@ -9,12 +9,12 @@ import UIKit
 final class Modele {
     enum EtatLangues { case verification, installees, aTelecharger }
 
-    private(set) var paires: [(fr: String, ja: String)] = []
+    private(set) var paires: [(original: String, traduction: String)] = []
     private(set) var captureActive = false
     private(set) var fenetreActive = false
     private(set) var etatLangues: EtatLangues = .verification
     private(set) var erreur: String?
-    var afficherFrancais = true {
+    var afficherOriginal = true {
         didSet { redessiner() }
     }
 
@@ -75,7 +75,7 @@ final class Modele {
             return
         }
         guard etatLangues == .installees else {
-            erreur = "Télécharge d'abord le français et le japonais (étape 1)."
+            erreur = "Télécharge d'abord le japonais et le français (étape 1)."
             return
         }
 
@@ -86,8 +86,8 @@ final class Modele {
                 if aRelire { aRelire = false; recharger() }
             }
             do {
-                let japonais = try await traducteur.traduire(texte.blocs)
-                paires = Array(zip(texte.blocs, japonais)).map { (fr: $0.0, ja: $0.1) }
+                let francais = try await traducteur.traduire(texte.blocs)
+                paires = Array(zip(texte.blocs, francais)).map { (original: $0.0, traduction: $0.1) }
                 erreur = nil
                 redessiner()
             } catch {
@@ -98,7 +98,7 @@ final class Modele {
     }
 
     private func redessiner() {
-        fenetre.afficher(Dessin.image(paires: paires, afficherFrancais: afficherFrancais,
+        fenetre.afficher(Dessin.image(paires: paires, afficherOriginal: afficherOriginal,
                                       captureActive: captureActive))
     }
 }

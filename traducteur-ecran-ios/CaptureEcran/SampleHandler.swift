@@ -3,7 +3,7 @@ import ReplayKit
 import Vision
 
 /// Extension « Diffusion de l'écran » : reçoit les images de tout l'écran,
-/// lit le texte français avec Vision et l'envoie à l'application.
+/// lit le texte japonais avec Vision et l'envoie à l'application.
 /// Une extension de diffusion est limitée à ~50 Mo de mémoire : on analyse
 /// au plus une image à la fois, et seulement toutes les `intervalle` secondes.
 final class SampleHandler: RPBroadcastSampleHandler {
@@ -56,7 +56,7 @@ final class SampleHandler: RPBroadcastSampleHandler {
     private func analyser(_ image: CVPixelBuffer, orientation: CGImagePropertyOrientation) {
         let requete = VNRecognizeTextRequest()
         requete.recognitionLevel = .accurate
-        requete.recognitionLanguages = ["fr-FR"]
+        requete.recognitionLanguages = ["ja-JP"]
         requete.usesLanguageCorrection = true
         requete.minimumTextHeight = 0.01
 
@@ -66,10 +66,9 @@ final class SampleHandler: RPBroadcastSampleHandler {
         let lignes: [Ligne] = (requete.results ?? []).compactMap { observation in
             guard let candidat = observation.topCandidates(1).first, candidat.confidence >= 0.4 else { return nil }
             let texte = candidat.string.trimmingCharacters(in: .whitespacesAndNewlines)
-            // On ignore l'heure, les icônes… et notre propre fenêtre en japonais.
-            guard texte.count >= 2,
-                  texte.contains(where: \.isLetter),
-                  !Self.contientJaponais(texte) else { return nil }
+            // On ne garde que le japonais : l'heure, les icônes et notre propre
+            // fenêtre (en français) sont ainsi ignorées.
+            guard Self.contientJaponais(texte) else { return nil }
             return Ligne(texte: texte, cadre: observation.boundingBox)
         }
 
@@ -90,12 +89,7 @@ final class SampleHandler: RPBroadcastSampleHandler {
                 let ecart = p.cadre.minY - ligne.cadre.maxY
                 let memeColonne = abs(p.cadre.minX - ligne.cadre.minX) < 0.12
                 if memeColonne && ecart >= -p.cadre.height * 0.3 && ecart < p.cadre.height * 0.9 {
-                    if dernier.hasSuffix("-") {
-                        dernier.removeLast()
-                        dernier += ligne.texte
-                    } else {
-                        dernier += " " + ligne.texte
-                    }
+                    dernier += ligne.texte // le japonais s'écrit sans espaces
                     blocs.append(dernier)
                 } else {
                     blocs.append(dernier)

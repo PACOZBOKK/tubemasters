@@ -16,13 +16,13 @@ struct ContentView: View {
                     case .verification:
                         Label("Vérification…", systemImage: "hourglass")
                     case .installees:
-                        Label("Français et japonais installés", systemImage: "checkmark.circle.fill")
+                        Label("Japonais et français installés", systemImage: "checkmark.circle.fill")
                             .foregroundStyle(.green)
                     case .aTelecharger:
                         Button {
                             telechargement = .init(source: Traducteur.source, target: Traducteur.cible)
                         } label: {
-                            Label("Télécharger français + japonais", systemImage: "arrow.down.circle")
+                            Label("Télécharger japonais + français", systemImage: "arrow.down.circle")
                         }
                     }
                 } header: {
@@ -44,7 +44,7 @@ struct ContentView: View {
                     }
                     .disabled(!modele.fenetre.estSupportee)
 
-                    Toggle("Afficher aussi le français", isOn: $modele.afficherFrancais)
+                    Toggle("Afficher aussi le japonais original", isOn: $modele.afficherOriginal)
                 } header: {
                     Text("2. Fenêtre flottante")
                 } footer: {
@@ -59,7 +59,7 @@ struct ContentView: View {
                         VStack(alignment: .leading) {
                             Text(modele.captureActive ? "Capture en cours" : "Démarrer la capture")
                                 .font(.headline)
-                            Text("Touche le rond, choisis « Traducteur FR→JA » puis « Commencer la diffusion ».")
+                            Text("Touche le rond, choisis « Traducteur JA→FR » puis « Commencer la diffusion ».")
                                 .font(.footnote)
                                 .foregroundStyle(.secondary)
                         }
@@ -78,14 +78,14 @@ struct ContentView: View {
                     Section("Dernières traductions") {
                         ForEach(Array(modele.paires.enumerated()), id: \.offset) { _, paire in
                             VStack(alignment: .leading, spacing: 4) {
-                                Text(paire.ja).font(.body.weight(.semibold))
-                                Text(paire.fr).font(.caption).foregroundStyle(.secondary)
+                                Text(paire.traduction).font(.body.weight(.semibold))
+                                Text(paire.original).font(.caption).foregroundStyle(.secondary)
                             }
                         }
                     }
                 }
             }
-            .navigationTitle("Écran FR → JA")
+            .navigationTitle("Écran JA → FR")
         }
         .translationTask(telechargement) { session in
             do {

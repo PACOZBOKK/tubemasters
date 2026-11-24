@@ -52,7 +52,7 @@ targets:
     info:
       path: CaptureEcran/Info.plist
       properties:
-        CFBundleDisplayName: Traducteur FR→JA
+        CFBundleDisplayName: Traducteur JA→FR
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         AppGroupID: $(APP_GROUP_ID)

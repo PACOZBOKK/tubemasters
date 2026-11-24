@@ -1,11 +1,11 @@
 import Foundation
 import Translation
 
-/// Traduction français → japonais, entièrement sur l'iPhone (framework Translation d'Apple).
+/// Traduction japonais → français, entièrement sur l'iPhone (framework Translation d'Apple).
 @MainActor
 final class Traducteur {
-    static let source = Locale.Language(identifier: "fr")
-    static let cible = Locale.Language(identifier: "ja")
+    static let source = Locale.Language(identifier: "ja")
+    static let cible = Locale.Language(identifier: "fr")
 
     private var session: TranslationSession?
     private var cache: [String: String] = [:]

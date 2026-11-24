@@ -1,0 +1,26 @@
+name: Vérifier l'appli iPhone (traducteur)
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "traducteur-ecran-ios/**"
+      - ".github/workflows/traducteur-ios.yml"
+jobs:
+  build:
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: traducteur-ecran-ios
+    steps:
+      - uses: actions/checkout@v4
+      - name: Installer XcodeGen
+        run: brew install xcodegen
+      - name: Générer le projet Xcode
+        run: xcodegen generate
+      - name: Compiler (sans signature)
+        run: |
+          xcodebuild -version
+          xcodebuild -project TraducteurEcran.xcodeproj -scheme TraducteurEcran \
+            -destination 'generic/platform=iOS' -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO build | tail -n 60
+          exit ${PIPESTATUS[0]}

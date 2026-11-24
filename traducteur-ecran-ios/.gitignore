@@ -1,0 +1,7 @@
+*.xcodeproj/
+App/Info.plist
+App/*.entitlements
+CaptureEcran/Info.plist
+CaptureEcran/*.entitlements
+build/
+DerivedData/

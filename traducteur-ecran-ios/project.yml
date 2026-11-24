@@ -1,0 +1,66 @@
+# Projet XcodeGen : lance `xcodegen generate` dans ce dossier pour créer TraducteurEcran.xcodeproj
+name: TraducteurEcran
+options:
+  deploymentTarget:
+    iOS: "26.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    # ⬇️ Change ces deux lignes avec ton identifiant à toi et ton équipe Apple
+    BASE_BUNDLE_ID: com.exemple.traducteurecran
+    DEVELOPMENT_TEAM: ""
+    APP_GROUP_ID: group.$(BASE_BUNDLE_ID)
+    CODE_SIGN_STYLE: Automatic
+    SWIFT_VERSION: "5.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    TARGETED_DEVICE_FAMILY: "1,2"
+
+targets:
+  TraducteurEcran:
+    type: application
+    platform: iOS
+    sources: [App, Shared]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(BASE_BUNDLE_ID)
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: Traducteur
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        UILaunchScreen: {}
+        UIBackgroundModes: [audio]
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        AppGroupID: $(APP_GROUP_ID)
+    entitlements:
+      path: App/TraducteurEcran.entitlements
+      properties:
+        com.apple.security.application-groups: [$(APP_GROUP_ID)]
+    dependencies:
+      - target: CaptureEcran
+
+  CaptureEcran:
+    type: app-extension
+    platform: iOS
+    sources: [CaptureEcran, Shared]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(BASE_BUNDLE_ID).broadcast
+    info:
+      path: CaptureEcran/Info.plist
+      properties:
+        CFBundleDisplayName: Traducteur FR→JA
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        AppGroupID: $(APP_GROUP_ID)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.broadcast-services-upload
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).SampleHandler
+          RPBroadcastProcessMode: RPBroadcastProcessModeSampleBuffer
+    entitlements:
+      path: CaptureEcran/CaptureEcran.entitlements
+      properties:
+        com.apple.security.application-groups: [$(APP_GROUP_ID)]
